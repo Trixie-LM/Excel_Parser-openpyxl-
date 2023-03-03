@@ -1,56 +1,67 @@
 from openpyxl import load_workbook
 
-document = 'C:/Users/Trixie_LM/Desktop/ExcelParser/Отчет для сверки.xlsm'
+document = 'C:/Users/Trixie_LM/Desktop/1C/Отчет для сверки.xlsm'
 
 book = load_workbook(filename=document, data_only=True)
 sheet = book.active
 
+
+def amount_counting(char):
+    summary = 0
+
+    for i in range(2, sheet.max_row + 1):
+        cellValue = sheet[char + str(i)].value
+        summary += cellValue
+
+    return summary
+
+
 # Продажа
 def number_of_circulation_sales():
-    return sheet['E' + str(sheet.max_row)].value
+    return amount_counting('E')
 
 def amount_of_circulation_sales():
-    return sheet['F' + str(sheet.max_row)].value
+    return amount_counting('F')
 
 def number_of_digital_sales():
-    return sheet['G' + str(sheet.max_row)].value
+    return amount_counting('G')
 
 def amount_of_digital_sales():
-    return sheet['H' + str(sheet.max_row)].value
+    return amount_counting('H')
 
 def number_of_instant_sales():
-    return sheet['I' + str(sheet.max_row)].value
+    return amount_counting('I')
 
 def amount_of_instant_sales():
-    return sheet['J' + str(sheet.max_row)].value
+    return amount_counting('J')
 
 def total_number_of_sales():
-    return sheet['K' + str(sheet.max_row)].value
+    return amount_counting('K')
 
 def total_amount_of_sales():
-    return sheet['L' + str(sheet.max_row)].value
+    return amount_counting('L')
 
 # Выплата
 def number_of_circulation_payments():
-    return sheet['M' + str(sheet.max_row)].value
+    return amount_counting('M')
 
 def amount_of_circulation_payments():
-    return sheet['N' + str(sheet.max_row)].value
+    return amount_counting('N')
 
 def number_of_digital_payments():
-    return sheet['O' + str(sheet.max_row)].value
+    return amount_counting('O')
 
 def amount_of_digital_payments():
-    return sheet['P' + str(sheet.max_row)].value
+    return amount_counting('P')
 
 def number_of_instant_payments():
-    return sheet['Q' + str(sheet.max_row)].value
+    return amount_counting('Q')
 
 def amount_of_instant_payments():
-    return sheet['R' + str(sheet.max_row)].value
+    return amount_counting('R')
 
 def total_number_of_payments():
-    return sheet['S' + str(sheet.max_row)].value
+    return amount_counting('S')
 
 def total_amount_of_payments():
-    return sheet['T' + str(sheet.max_row)].value
+    return amount_counting('T')

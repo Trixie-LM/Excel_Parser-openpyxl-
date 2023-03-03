@@ -2,7 +2,7 @@ from openpyxl.styles import Border, Side, PatternFill, Font, Alignment
 from openpyxl import Workbook
 from big_arrays import Arrays
 
-file = 'C:/Users/Trixie_LM/Desktop/ExcelParser/Итоговый отчет.xlsx'
+file = 'C:/Users/Trixie_LM/Desktop/1C/Итоговый отчет.xlsx'
 
 # Создание файла "Итоговый отчет"
 excel = Workbook()

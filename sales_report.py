@@ -1,7 +1,7 @@
 from openpyxl import load_workbook
 from numpy import unique
 
-file = 'C:/Users/Trixie_LM/Desktop/ExcelParser/Проданные билеты.xlsx'
+file = 'C:/Users/Trixie_LM/Desktop/1C/Проданные билеты.xlsx'
 
 book = load_workbook(filename=file, data_only=True)
 sheet = book.active
