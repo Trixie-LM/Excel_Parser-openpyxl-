@@ -157,5 +157,3 @@ class CountTicketSales:
         else:
             return "Нужно проверить открытки"
 
-import report_of_checking
-print(  ReportSalesData().total_quantity_tickets_in_report(), float(report_of_checking.total_number_of_sales()))
