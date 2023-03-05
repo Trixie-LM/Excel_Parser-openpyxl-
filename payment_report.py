@@ -49,7 +49,8 @@ class ReportPaymentsData:
                     passedAssertions += 1
 
                 else:
-                    print(f'Ошибка! Отчет выплат. Строка - {str(i)}\n{sheet["I" + str(i)].value}-{len(drawCell)}{setCell}')
+                    print(
+                        f'Ошибка! Отчет выплат. Строка - {str(i)}\n{sheet["I" + str(i)].value}-{len(drawCell)}{setCell}')
 
             except AssertionError:
                 print('Ошибка! Отчет выплат. Строка - ' + str(i))
@@ -117,8 +118,10 @@ class CountTicketPayments:
         return ticketsQuantity, winAmount
 
     def all_ticket_types(self):
-        ticketsQuantity = self.counting_tickets('Электронный')[0] + self.counting_tickets('Бумажный')[0] + self.counting_tickets('Открытка')[0]
-        winAmounts = self.counting_tickets('Электронный')[1] + self.counting_tickets('Бумажный')[1] + self.counting_tickets('Открытка')[1]
+        ticketsQuantity = self.counting_tickets('Электронный')[0] + self.counting_tickets('Бумажный')[0] + \
+                          self.counting_tickets('Открытка')[0]
+        winAmounts = self.counting_tickets('Электронный')[1] + self.counting_tickets('Бумажный')[1] + \
+                     self.counting_tickets('Открытка')[1]
 
         return ticketsQuantity, winAmounts
 
@@ -151,4 +154,15 @@ class CountTicketPayments:
         else:
             return "В отчете есть билеты с выигрышем более 15000 руб"
 
+    @staticmethod
+    def collecting_numbers():
+        arrayNumbers = {}
+
+        for i in range(2, sheet.max_row):
+            ticketNumber = sheet['I' + str(i)].value
+            winAmount = int(sheet['N' + str(i)].value)
+
+            arrayNumbers[ticketNumber] = winAmount
+
+        return arrayNumbers
 

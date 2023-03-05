@@ -1,6 +1,6 @@
 from openpyxl.styles import Border, Side, PatternFill, Font, Alignment
 from openpyxl import Workbook
-from big_arrays import Arrays
+import common_core
 
 file = 'C:/Users/Trixie_LM/Desktop/1C/Итоговый отчет.xlsx'
 
@@ -12,7 +12,7 @@ sheet.title = "Итоговый отчет"
 
 class TestingReports:
     # Редактирование ячеек в файле
-    for cell in Arrays.editing_cells():
+    for cell in common_core.editing_cells():
         double = Side(border_style="double", color="FF000000")
         startCell = cell.split(':')[0]
 
@@ -22,17 +22,19 @@ class TestingReports:
         sheet.merge_cells(cell)
 
     # Импорт данных в таблицу
-    for columnNumber, text in Arrays.input_data():
+    for columnNumber, text in common_core.input_data():
         sheet[columnNumber].value = text
 
     sheet.column_dimensions["F"].auto_size = True
     sheet.column_dimensions["P"].auto_size = True
 
     # Сверка данных и заливка фона ячейки
-    for cellNumber, numberInReport, verifiable in Arrays.check_and_painting():
+    for cellNumber, numberInReport, verifiable in common_core.check_and_painting():
         if str(numberInReport) == str(verifiable):
             sheet[cellNumber].fill = PatternFill('solid', fgColor="00FF00")
         else:
             sheet[cellNumber].fill = PatternFill('solid', fgColor="FF0000")
 
     excel.save(file)
+
+print("COMPLETE!")
