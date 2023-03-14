@@ -154,6 +154,7 @@ class CountTicketPayments:
         else:
             return "В отчете есть билеты с выигрышем более 15000 руб"
 
+    # Необходим для paid_payments_registry
     @staticmethod
     def collecting_numbers():
         arrayNumbers = {}

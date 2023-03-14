@@ -3,58 +3,69 @@ from openpyxl.utils import get_column_letter
 from payment_report import CountTicketPayments
 
 file = 'C:/Users/Trixie_LM/Desktop/1C/Реестр выплаченных выигрышей.xlsx'
-book = load_workbook(filename=file, data_only=True)
+book = load_workbook(filename=file)
 sheet = book.active
 
+# Проверка наличия доп.листа в файле
+if "Реестр выплаченных выигрышей" not in book.sheetnames:
+    book.create_sheet("Реестр выплаченных выигрышей")
 
-def total_quantity_tickets_in_report():
-    max_column = int(sheet.max_column) - 3
-
-
-    for number in range(0, sheet.max_row):
-        print(get_column_letter(number))
-
-    #     if sheet.max_column:
-    #         ticket_numbers_column = get_column_letter(number)
-    #         win_amounts_column = get_column_letter(number + 1)
-    #
-    # return sheet['M' + str(sheet.max_row)].value
+add_sheet = book["Реестр выплаченных выигрышей"]
 
 
-# ttl = int(sheet.max_column) - 3
-# for number in range(ttl, 1, -4):
-#     qqq = get_column_letter(number)
+class PreCondition:
+    @staticmethod
+    def copying_table():
+        add_sheet.delete_rows(1, add_sheet.max_row)
+        # Копирование основной части файла в итоговый отчет
+        begin_column = int(sheet.max_column) - 3
+        second_last_page = sheet.iter_rows(min_col=begin_column - 4, max_col=begin_column - 1, values_only=True)
+        last_page = sheet.iter_rows(min_col=begin_column, values_only=True)
 
-from openpyxl import load_workbook as lw
-from openpyxl.utils import get_column_letter
+        # Копирование строк в новый файл
+        for row in second_last_page:
+            add_sheet.append(row)
+        for row in last_page:
+            add_sheet.append(row)
+
+        book.save(file)
+
+    @staticmethod
+    def delete_rows():
+        # Удаление лишних строк в начале
+        first_row = 0
+        for row in list(add_sheet.rows):
+            for cell in row:
+                if cell.value == "Итого по каждой игре":
+                    first_row = cell.row
+                    break
+            if first_row > 0:
+                break
+
+        if first_row > 0:
+            add_sheet.delete_rows(1, first_row - 1)
+
+        # Удаление лишних строк в конце
+        last_row = 0
+        for row in reversed(list(add_sheet.rows)):
+            for cell in row:
+                if cell.value == "ИТОГО:":
+                    last_row = cell.row
+                    break
+            if last_row > 0:
+                break
+
+        if last_row > 0:
+            add_sheet.delete_rows(last_row + 1, add_sheet.max_row - last_row)
+
+        book.save(file)
 
 
+def paid_lottery_names_list():
+    return list(add_sheet.rows)
 
-for col in range(int(sheet.max_column-4) - 3, 8, -4):
-    col_letter = get_column_letter(col)
-    in_total = [cell for cell in sheet[col_letter] if cell.value == 'Итого по каждой игре'][0].row
-    qqq = [cell for cell in sheet[col_letter][in_total:] if cell.value == 'ИТОГО:'][0].row
-
-
-
-
-
-
-    print(qqq)
-
-
-
-
-
-
-
-
-
-def win_amount_in_report():
-    return sheet['N' + str(sheet.max_row)].value
-
-
-# Поиск расхождений между 2 отчетами
+# TODO: добавить в отчет для проверки
+# Поиск расхождение между реестром и отчетом по выплатам
 def discrepancy_reports():
     remaining_tickets = CountTicketPayments.collecting_numbers()
     try:
@@ -68,14 +79,18 @@ def discrepancy_reports():
 
                 if ticket_number_cell is not None and type(
                         ticket_number_cell) != float and ticket_number_cell.isdigit():
+                    print(remaining_tickets[ticket_number_cell])
                     if remaining_tickets[ticket_number_cell] == int(win_amount_cell.replace(' ', '')):
                         remaining_tickets.pop(ticket_number_cell)
     except ValueError:
-        remaining_tickets = f"Что-то не так с билетом - {ticket_number_cell}, возможно, нет в отчете выплат!"
+        remaining_tickets = f"Ошибка! Что-то не так с билетом \"{ticket_number_cell}\" на строке {row}, возможно, нет в отчете выплат!"
+
+    except KeyError:
+        remaining_tickets = f"Ошибка! Билета \"{ticket_number_cell}\" на строке {row} нет в реестре выплаченных выигрышей, но есть в отчете по продажам!"
 
     return remaining_tickets
 
-
+# TODO: добавить в отчет для проверки
 # Счет билетов по столбцу "Номер лотерейного билета..."
 def count_tickets_and_winnings():
     amount_tickets = 0
@@ -94,6 +109,4 @@ def count_tickets_and_winnings():
                 amount_winnings += int(win_amount_column.replace(' ', ''))
 
     return amount_tickets, amount_winnings
-
-
-
+print(count_tickets_and_winnings())

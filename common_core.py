@@ -4,12 +4,6 @@ from payment_report import ReportPaymentsData, CountTicketPayments
 import report_of_checking
 
 
-def get_cell_value(char_column, number_line, report_path):
-    book = load_workbook(filename=report_path, data_only=True)
-    sheet = book.active
-    return sheet[char_column + str(number_line)].value
-
-
 def editing_cells():
     array = [
         # Отчет по продажам
@@ -51,8 +45,8 @@ def startCell(number):
 def input_data():
     array = [
         # Отчет по продажам
-        (startCell(0), "Отчет по продажам"),
-        ("B2", "Итоговое количество проданных билетов в отчете"),
+        ("B2", "Отчет по продажам"),
+        ("B4", "Итоговое количество проданных билетов в отчете"),
         ("F4", f"{ReportSalesData().total_quantity_tickets_in_report()} шт"),
         ("F5", f"{ReportSalesData().tickets_price_in_report()} руб"),
         ("B6", "Электронные билеты"),

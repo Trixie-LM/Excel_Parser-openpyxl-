@@ -1,32 +1,34 @@
 from openpyxl import load_workbook
 from numpy import unique
-
-file = 'C:/Users/Trixie_LM/Desktop/1C/Проданные билеты.xlsx'
-
-book = load_workbook(filename=file, data_only=True)
-sheet = book.active
+from util import get_cell_value
 
 
-class ReportSalesData:
+class SalesDataBase:
+    def __init__(self):
+        self.file_path = 'C:/Users/Trixie_LM/Desktop/1C/Проданные билеты.xlsx'
+        self.book = load_workbook(filename=self.file_path, data_only=True)
+        self.sheet = self.book.active
 
-    @staticmethod
-    def total_quantity_tickets_in_report():
-        return sheet['M' + str(sheet.max_row)].value
+    def _get_cell_value(self, column_letter, idx):
+        return get_cell_value(column_letter, idx, self.sheet)
 
-    @staticmethod
-    def tickets_price_in_report():
-        return sheet['N' + str(sheet.max_row)].value
+class ReportSalesData(SalesDataBase):
 
-    @staticmethod
-    def check_cells_in_row():
+    def total_quantity_tickets_in_report(self):
+        return self._get_cell_value('M', self.sheet.max_row)
+
+    def tickets_price_in_report(self):
+        return self._get_cell_value('N', self.sheet.max_row)
+
+    def check_cells_in_row(self):
         passedAssertions = 0
 
-        for i in range(2, sheet.max_row):
-            setCell = sheet['L' + str(i)].value
-            drawCell = sheet['I' + str(i)].value
-            ticketType = sheet['K' + str(i)].value
-            lotteryType = sheet['F' + str(i)].value
-            seventhDigit = sheet['J' + str(i)].value[6:7]
+        for i in range(2, self.sheet.max_row):
+            setCell = self._get_cell_value('L', i)
+            drawCell = self._get_cell_value('I', i)
+            ticketType = self._get_cell_value('K', i)
+            lotteryType = self._get_cell_value('F', i)
+            seventhDigit = self._get_cell_value('J', i)[6:7]
 
             try:
                 if lotteryType == "Бинго лотерея" and seventhDigit == "3" and len(
@@ -61,32 +63,29 @@ class ReportSalesData:
         return passedAssertions
 
 
-class CountTicketSales:
+class CountTicketSales(SalesDataBase):
 
-    @staticmethod
-    def total_quantity():
+    def total_quantity(self):
         tickets_amount = 0
-        for i in range(2, sheet.max_row):
-            tickets_amount += sheet['M' + str(i)].value
+        for i in range(2, self.sheet.max_row):
+            tickets_amount += self._get_cell_value('M', i)
         return tickets_amount
 
-    @staticmethod
-    def tickets_price():
+    def tickets_price(self):
         tickets_price = 0
-        for i in range(2, sheet.max_row):
-            tickets_price += sheet['N' + str(i)].value
+        for i in range(2, self.sheet.max_row):
+            tickets_price += self._get_cell_value('N', i)
         return tickets_price
 
-    @staticmethod
-    def counting_tickets(type_of_tickets, type_of_lottery=True):
+    def counting_tickets(self, type_of_tickets, type_of_lottery=True):
         ticketsQuantity = 0
         ticketsPrice = 0
         bingoLottery = ["102021", "102041", "102051", "102091"]
 
-        for i in range(2, sheet.max_row):
-            productCode = sheet['J' + str(i)].value[0:6]
-            ticketType = sheet['K' + str(i)].value
-            ticketPrice = sheet['N' + str(i)].value
+        for i in range(2, self.sheet.max_row):
+            productCode = self._get_cell_value('J', i)[0:6]
+            ticketType = self._get_cell_value('K', i)
+            ticketPrice = self._get_cell_value('N', i)
 
             # Подсчет электронных билетов и купонов
             if type_of_tickets == 'Электронный':
@@ -126,12 +125,11 @@ class CountTicketSales:
 
         return ticketsQuantity, ticketsPrice
 
-    @staticmethod
-    def unique_ticket_numbers():
+    def unique_ticket_numbers(self):
         ticketNumbersQuantity = 0
         ticketNumbers = []
-        for i in range(2, sheet.max_row):
-            ticketNumber = sheet['J' + str(i)].value
+        for i in range(2, self.sheet.max_row):
+            ticketNumber = self._get_cell_value('J', i)
             if ticketNumber is not None:
                 ticketNumbers.append(ticketNumber)
                 ticketNumbersQuantity += 1
@@ -141,13 +139,12 @@ class CountTicketSales:
         else:
             return "В отчете есть дубликат билета"
 
-    @staticmethod
-    def tickets_of_sets_in_report():
+    def tickets_of_sets_in_report(self):
         setAmount = 0
         allSets = []
-        for i in range(2, sheet.max_row):
+        for i in range(2, self.sheet.max_row):
 
-            ticketSetNumber = sheet['L' + str(i)].value
+            ticketSetNumber = self._get_cell_value('L', i)
             if ticketSetNumber is not None:
                 allSets.append(ticketSetNumber)
                 setAmount += 1
@@ -156,4 +153,3 @@ class CountTicketSales:
             return "Все билеты набора находятся в отчете"
         else:
             return "Нужно проверить открытки"
-
