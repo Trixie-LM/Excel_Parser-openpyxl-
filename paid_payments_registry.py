@@ -43,7 +43,7 @@ class PreCondition:
                 break
 
         if first_row > 0:
-            add_sheet.delete_rows(1, first_row - 1)
+            add_sheet.delete_rows(1, first_row)
 
         # Удаление лишних строк в конце
         last_row = 0
@@ -104,9 +104,8 @@ def count_tickets_and_winnings():
             ticket_number_cell = sheet[ticket_numbers_column + str(row)].value
             win_amount_column = sheet[win_amounts_column + str(row)].value
 
-            if ticket_number_cell is not None and type(ticket_number_cell) != float and ticket_number_cell.isdigit():
+            if ticket_number_cell is not None and type(ticket_number_cell) != int and ticket_number_cell.isdigit():
                 amount_tickets += 1
                 amount_winnings += int(win_amount_column.replace(' ', ''))
 
     return amount_tickets, amount_winnings
-print(count_tickets_and_winnings())
