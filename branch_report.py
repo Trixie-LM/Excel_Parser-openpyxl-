@@ -12,6 +12,7 @@ class CommonFunctions:
     def _get_cell_value(self, column_letter, idx):
         return get_cell_value(column_letter, idx, self.sheet)
 
+
 class SpreadSheet(CommonFunctions):
     def realization_of_lottery_tickets(self):
         # задаем начальное и конечное значение для поиска диапазона
@@ -27,7 +28,7 @@ class SpreadSheet(CommonFunctions):
             for cell in row:
                 # если найдено начальное значение, запоминаем его координаты
                 if cell.value == start_value_row:
-                    start_row, start_column = cell.row+4, cell.column
+                    start_row, start_column = cell.row + 4, cell.column
                 # если найдено конечное значение, запоминаем его координаты
                 elif cell.value == end_value_row:
                     end_row = cell.row
@@ -40,7 +41,8 @@ class SpreadSheet(CommonFunctions):
         # проверяем, что начальное и конечное значение найдены
         if start_row is not None and end_row is not None:
             # определяем диапазон
-            range = self.sheet.cell(row=start_row, column=start_column).coordinate + ':' + self.sheet.cell(row=end_row, column=end_column).coordinate
+            range = self.sheet.cell(row=start_row, column=start_column).coordinate + ':' + self.sheet.cell(row=end_row,
+                                                                                                           column=end_column).coordinate
             # выводим найденный диапазон
             return range
         else:
@@ -68,7 +70,6 @@ class SpreadSheet(CommonFunctions):
                 elif cell.value == end_value_column:
                     end_column = cell.column
 
-
         # проверяем, что начальное и конечное значение найдены
         if start_row is not None and end_row is not None:
             # определяем диапазон
@@ -80,20 +81,138 @@ class SpreadSheet(CommonFunctions):
             print('Диапазон не найден')
 
 
-class ParsingAndCounting(CommonFunctions):
-    def _total_values_in_report(self):
+class ReportData(CommonFunctions):
+    # Беру данные из "ИТОГО" в таблице "Реализация лотерейных билетов"
+    def _total_values_lottery_tickets(self, column):
         lottery_tickets_diapason = SpreadSheet().realization_of_lottery_tickets()
-        cell_range = self.sheet[lottery_tickets_diapason]
+        result_row = get_boundary_values(lottery_tickets_diapason, 'max_row')
+        # Продажи
+        sold_number = self._get_cell_value('H', result_row)
+        sold_amount = self._get_cell_value('I', result_row)
+        # Выплаты
+        paid_number = self._get_cell_value('L', result_row)
+        paid_amount = self._get_cell_value('M', result_row)
+        # Вознаграждения
+        reward = self._get_cell_value('P', result_row)
+        # Перечисление принципалу
+        transfer = self._get_cell_value('Q', result_row)
+
+        if column == 'sold_number':
+            return sold_number
+        elif column == 'sold_amount':
+            return sold_amount
+        elif column == 'paid_number':
+            return paid_number
+        elif column == 'paid_amount':
+            return paid_amount
+        elif column == 'reward':
+            return reward
+        elif column == 'transfer':
+            return transfer
+
+    # Беру данные из "ИТОГО" в таблице "Реализация лотерейных квитанций"
+    def _total_values_lottery_receipts(self, column):
+        lottery_tickets_diapason = SpreadSheet().realization_of_lottery_receipts()
+        result_row = get_boundary_values(lottery_tickets_diapason, 'max_row')
+        # Продажи
+        sold_number = self._get_cell_value('C', result_row)
+        sold_amount = self._get_cell_value('E', result_row)
+        # Выплаты
+        paid_number = self._get_cell_value('H', result_row)
+        paid_amount = self._get_cell_value('J', result_row)
+        # Вознаграждения
+        reward = self._get_cell_value('N', result_row)
+        # Перечисление принципалу
+        transfer = self._get_cell_value('P', result_row)
+
+        if column == 'sold_number':
+            return sold_number
+        elif column == 'sold_amount':
+            return sold_amount
+        elif column == 'paid_number':
+            return paid_number
+        elif column == 'paid_amount':
+            return paid_amount
+        elif column == 'reward':
+            return reward
+        elif column == 'transfer':
+            return transfer
+
+    # Общая сумма двух таблиц по вознаграждению
+    def _reward_of_two_tables(self):
+        lottery_tickets_diapason = SpreadSheet().realization_of_lottery_receipts()
+        result_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row'))+3
+        reward = self._get_cell_value('I', result_row)
+        return reward
+
+    # Общая сумма двух таблиц по перечислению средств
+    def _transfer_of_two_tables(self):
+        lottery_tickets_diapason = SpreadSheet().realization_of_lottery_receipts()
+        result_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row'))+4
+        reward = self._get_cell_value('I', result_row)
+        return reward
+
+class Asserts(CommonFunctions):
+    # Функция для подсчета итоговых данных в таблице "Реализация лотерейных билетов"
+    def counting_ticket_table(self, column, data_type=int):
+        total = 0
+        lottery_tickets_diapason = SpreadSheet().realization_of_lottery_tickets()
+        min_row = int(get_boundary_values(lottery_tickets_diapason, 'min_row'))
+        max_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row'))
+
+        for row in range(min_row, max_row):
+            cell = self.sheet.cell(row=row, column=column).value
+            total += data_type(cell)
+        return total
+
+    def sold_number_tickets(self):
+        return Asserts().counting_ticket_table(8)
+
+    def sold_amount_tickets(self):
+        return Asserts().counting_ticket_table(9)
+
+    def paid_number_tickets(self):
+        return Asserts().counting_ticket_table(11)
+
+    def paid_amount_tickets(self):
+        return Asserts().counting_ticket_table(13)
+
+    def reward_tickets(self):
+        return Asserts().counting_ticket_table(16, float)
+
+    def transfer_tickets(self):
+        return Asserts().counting_ticket_table(17, float)
+
+    # Функция для подсчета итоговых данных в таблице "Реализация лотерейных квитанций"
+    def counting_receipt_table(self, column, data_type=int):
+        total = 0
+        lottery_tickets_diapason = SpreadSheet().realization_of_lottery_receipts()
+        min_row = int(get_boundary_values(lottery_tickets_diapason, 'min_row'))
+        max_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row'))
+
+        for row in range(min_row, max_row):
+            cell = self.sheet.cell(row=row, column=column).value
+            total += data_type(cell)
+        return total
+
+    def sold_number_receipts(self):
+        return Asserts().counting_receipt_table(3)
+
+    def sold_amount_receipts(self):
+        return Asserts().counting_receipt_table(5)
+
+    def paid_number_receipts(self):
+        return Asserts().counting_receipt_table(8)
+
+    def paid_amount_receipts(self):
+        return Asserts().counting_receipt_table(10)
+
+    def reward_receipts(self):
+        return Asserts().counting_receipt_table(14, float)
+
+    def transfer_receipts(self):
+        return Asserts().counting_receipt_table(16, float)
 
 
-        print(get_boundary_values(lottery_tickets_diapason, 'max_row'))
-
-
-        lottery_receipts_diapason = SpreadSheet().realization_of_lottery_receipts()
-        # for row in cell_range:
-        #     for cell in row:
-        #         print(cell.value)
-
-
-
-ParsingAndCounting()._total_values_in_report()
+qqq = Asserts().transfer_receipts()
+print(qqq)

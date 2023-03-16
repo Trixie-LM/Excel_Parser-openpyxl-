@@ -1,8 +1,8 @@
 from openpyxl import load_workbook
 from sales_report import ReportSalesData, CountTicketSales
 from payment_report import ReportPaymentsData, CountTicketPayments
+from branch_report import ReportData
 import report_of_checking
-
 
 def editing_cells():
     array = [
@@ -190,41 +190,29 @@ def input_data():
         ("B29", "Билеты (1 табл)"), ("E29", "Квитанции (2 табл)"),
         ("B30", "Сумма всех проданных\nтиражно-бумажных и открыток"), ("E30", "Сумма всех проданных\nэлектронных и купонов"),
         ("D32", "Продажа"),
+        ("B32", f"{ReportData()._total_values_lottery_tickets('sold_number')} шт"),
+        ("B33", f"{ReportData()._total_values_lottery_tickets('sold_amount')} руб"),
+        ("F32", f"{ReportData()._total_values_lottery_receipts('sold_number')} шт"),
+        ("F33", f"{ReportData()._total_values_lottery_receipts('sold_amount')} руб"),
         ("D34", "Выплата"),
+        ("B34", f"{ReportData()._total_values_lottery_tickets('paid_number')} шт"),
+        ("B35", f"{ReportData()._total_values_lottery_tickets('paid_amount')} руб"),
+        ("F34", f"{ReportData()._total_values_lottery_receipts('paid_number')} шт"),
+        ("F35", f"{ReportData()._total_values_lottery_receipts('paid_amount')} руб"),
         ("D36", "Вознаграждение Филиала"),
+        ("B36", f"{ReportData()._total_values_lottery_tickets('reward')} руб"),
+        ("F36", f"{ReportData()._total_values_lottery_receipts('reward')} руб"),
         ("D38", "Перечислению за отчетный период"),
+        ("B38", f"{ReportData()._total_values_lottery_tickets('transfer')} руб"),
+        ("F38", f"{ReportData()._total_values_lottery_receipts('transfer')} руб"),
             # РАЗДЕЛИТЕЛЬ
         ("D41", "Подсчет по столбцу \"Реализовано бил..\""),
         ("D43", "Подсчет по столбцу \"Выплачено выигр..\""),
         ("D45", "Подсчет по столбцу \"Вознаграждение Ф..\""),
         ("D47", "Подсчет по столбцу \"Подлежит перечис..\""),
         ("C49", "Расчет для каждой строки верный?\nЕсли нет, то на какой строке?"),
-        ("B51", "Вознаграждение филиала составило:\n xxx"),
-        ("B53", "К перечислению на расч.счет следует:\n xxx"),
-
-        # Отчет агента
-        ("J28", "Отчет агента"),
-
-        # Отчет агента для бестиражных лотерей
-        ("R28", "Отчет агента для бестиражных лотерей"),
-
-        # Отчет филиала
-        ("B28", "Отчет филиала"),
-        ("B29", "Билеты (1 табл)"), ("E29", "Квитанции (2 табл)"),
-        ("B30", "Сумма всех проданных\nтиражно-бумажных и открыток"),
-        ("E30", "Сумма всех проданных\nэлектронных и купонов"),
-        ("D32", "Продажа"),
-        ("D34", "Выплата"),
-        ("D36", "Вознаграждение Филиала"),
-        ("D38", "Перечислению за отчетный период"),
-            # РАЗДЕЛИТЕЛЬ
-        ("D41", "Подсчет по столбцу \"Реализовано бил..\""),
-        ("D43", "Подсчет по столбцу \"Выплачено выигр..\""),
-        ("D45", "Подсчет по столбцу \"Вознаграждение Ф..\""),
-        ("D47", "Подсчет по столбцу \"Подлежит перечис..\""),
-        ("C49", "Расчет для каждой строки верный?\nЕсли нет, то на какой строке?"),
-        ("B51", "Вознаграждение филиала составило:\n xxx"),
-        ("B53", "К перечислению на расч.счет следует:\n xxx"),
+        ("B51", f"Общее вознаграждение филиала составило:\n{ReportData()._reward_of_two_tables()}"),
+        ("B53", f"Общая сумма к перечислению на расч.счет составляет:\n{ReportData()._transfer_of_two_tables()}"),
 
         # Отчет агента
         ("J28", "Отчет агента"),
