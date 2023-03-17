@@ -152,7 +152,7 @@ class ReportBranchData(CommonFunctions):
         return reward
 
 
-class Asserts(CommonFunctions):
+class BranchAsserts(CommonFunctions):
     # Функция для подсчета итоговых данных
     # в таблицах "Реализация лотерейных билетов" и "Реализация лотерейных квитанций"
     def _counting_values_in_column(self, table, column, data_type='int'):
@@ -179,51 +179,51 @@ class Asserts(CommonFunctions):
 
     # "Реализация лотерейных билетов"
     def _sold_number_tickets(self):
-        return Asserts()._counting_values_in_column('realization_tickets', 8)
+        return BranchAsserts()._counting_values_in_column('realization_tickets', 8)
 
     def _sold_amount_tickets(self):
-        return Asserts()._counting_values_in_column('realization_tickets', 9)
+        return BranchAsserts()._counting_values_in_column('realization_tickets', 9)
 
     def _paid_number_tickets(self):
-        return Asserts()._counting_values_in_column('realization_tickets', 11)
+        return BranchAsserts()._counting_values_in_column('realization_tickets', 11)
 
     def _paid_amount_tickets(self):
-        return Asserts()._counting_values_in_column('realization_tickets', 13)
+        return BranchAsserts()._counting_values_in_column('realization_tickets', 13)
 
     def _reward_tickets(self):
-        return Asserts()._counting_values_in_column('realization_tickets', 16, 'float')
+        return BranchAsserts()._counting_values_in_column('realization_tickets', 16, 'float')
 
     def _transfer_tickets(self):
-        return Asserts()._counting_values_in_column('realization_tickets', 17, 'float')
+        return BranchAsserts()._counting_values_in_column('realization_tickets', 17, 'float')
 
     # "Реализация лотерейных квитанций"
     def _sold_number_receipts(self):
-        return Asserts()._counting_values_in_column('realization_receipts', 3)
+        return BranchAsserts()._counting_values_in_column('realization_receipts', 3)
 
     def _sold_amount_receipts(self):
-        return Asserts()._counting_values_in_column('realization_receipts', 5)
+        return BranchAsserts()._counting_values_in_column('realization_receipts', 5)
 
     def _paid_number_receipts(self):
-        return Asserts()._counting_values_in_column('realization_receipts', 8)
+        return BranchAsserts()._counting_values_in_column('realization_receipts', 8)
 
     def _paid_amount_receipts(self):
-        return Asserts()._counting_values_in_column('realization_receipts', 10)
+        return BranchAsserts()._counting_values_in_column('realization_receipts', 10)
 
     def _reward_receipts(self):
-        return Asserts()._counting_values_in_column('realization_receipts', 14, 'float')
+        return BranchAsserts()._counting_values_in_column('realization_receipts', 14, 'float')
 
     def _transfer_receipts(self):
-        return Asserts()._counting_values_in_column('realization_receipts', 16, 'float')
+        return BranchAsserts()._counting_values_in_column('realization_receipts', 16, 'float')
 
     # Общее вознаграждение и перечисление
     def _total_rewards(self):
-        tickets = Asserts()._reward_tickets()
-        receipts = Asserts()._reward_receipts()
+        tickets = BranchAsserts()._reward_tickets()
+        receipts = BranchAsserts()._reward_receipts()
         return tickets + receipts
 
     def _total_transfer(self):
-        tickets = Asserts()._transfer_tickets()
-        receipts = Asserts()._transfer_receipts()
+        tickets = BranchAsserts()._transfer_tickets()
+        receipts = BranchAsserts()._transfer_receipts()
         return tickets + receipts
 
     # Проверка расчетов в каждой строке

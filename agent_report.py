@@ -12,10 +12,10 @@ class CommonFunctions:
         return get_cell_value(column_letter, idx, self.sheet)
 
 
-class SpreadSheet(CommonFunctions):
+class WorkSheet(CommonFunctions):
     def realization_of_lottery_tickets(self):
         # задаем начальное и конечное значение для поиска диапазона
-        start_value_row = 'Наименование лотереи'
+        start_value_row = 'Наименование филиала'
         end_value_row = 'ИТОГО:'
         end_value_column = 'Подлежит перечислению Принципалу за отчетный период'
 
@@ -49,7 +49,7 @@ class SpreadSheet(CommonFunctions):
 
     def realization_of_lottery_receipts(self):
         # задаем начальное и конечное значение для поиска диапазона
-        start_value_row = 'Наименование лотереи'
+        start_value_row = 'Наименование филиала'
         end_value_row = 'ИТОГО:'
         end_value_column = 'Подлежит перечислению Принципалу за отчетный период'
 
@@ -79,22 +79,35 @@ class SpreadSheet(CommonFunctions):
         else:
             print('Диапазон не найден')
 
+    #TODO: нужен ли метод?
+    def AFPS_MOSCOW_tickets(self):
+        branch = "УФПС Г. МОСКВЫ"
+        diapason = WorkSheet().realization_of_lottery_tickets()
+        min_row = int(get_boundary_values(diapason, 'min_row'))
+        max_row = int(get_boundary_values(diapason, 'max_row'))
 
-class ReportBranchData(CommonFunctions):
+        for row in range(min_row, max_row):
+            cell = self.sheet.cell(row, 2)
+            if cell.value == branch:
+                print("Фраза найдена в строке:", row)
+        return min_row, max_row
+
+
+class ReportAgentData(CommonFunctions):
     # Беру данные из "ИТОГО" в таблице "Реализация лотерейных билетов"
     def _total_values_lottery_tickets(self, column):
-        lottery_tickets_diapason = SpreadSheet().realization_of_lottery_tickets()
+        lottery_tickets_diapason = WorkSheet().realization_of_lottery_tickets()
         result_row = get_boundary_values(lottery_tickets_diapason, 'max_row')
         # Продажи
-        sold_number = self._get_cell_value('H', result_row)
-        sold_amount = self._get_cell_value('I', result_row)
+        sold_number = self._get_cell_value('F', result_row)
+        sold_amount = self._get_cell_value('G', result_row)
         # Выплаты
-        paid_number = self._get_cell_value('L', result_row)
-        paid_amount = self._get_cell_value('M', result_row)
+        paid_number = self._get_cell_value('K', result_row)
+        paid_amount = self._get_cell_value('L', result_row)
         # Вознаграждения
-        reward = self._get_cell_value('P', result_row)
+        reward = self._get_cell_value('N', result_row)
         # Перечисление принципалу
-        transfer = self._get_cell_value('Q', result_row)
+        transfer = self._get_cell_value('O', result_row)
 
         if column == 'sold_number':
             return sold_number
@@ -111,7 +124,7 @@ class ReportBranchData(CommonFunctions):
 
     # Беру данные из "ИТОГО" в таблице "Реализация лотерейных квитанций"
     def _total_values_lottery_receipts(self, column):
-        lottery_tickets_diapason = SpreadSheet().realization_of_lottery_receipts()
+        lottery_tickets_diapason = WorkSheet().realization_of_lottery_receipts()
         result_row = get_boundary_values(lottery_tickets_diapason, 'max_row')
         # Продажи
         sold_number = self._get_cell_value('C', result_row)
@@ -122,7 +135,7 @@ class ReportBranchData(CommonFunctions):
         # Вознаграждения
         reward = self._get_cell_value('N', result_row)
         # Перечисление принципалу
-        transfer = self._get_cell_value('P', result_row)
+        transfer = self._get_cell_value('O', result_row)
 
         if column == 'sold_number':
             return sold_number
@@ -139,28 +152,42 @@ class ReportBranchData(CommonFunctions):
 
     # Общая сумма двух таблиц по вознаграждению
     def _reward_of_two_tables(self):
-        lottery_tickets_diapason = SpreadSheet().realization_of_lottery_receipts()
-        result_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row')) + 3
-        reward = self._get_cell_value('I', result_row)
+        lottery_tickets_diapason = WorkSheet().realization_of_lottery_receipts()
+        result_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row')) + 5
+        reward = self._get_cell_value('K', result_row)
         return reward
 
     # Общая сумма двух таблиц по перечислению средств
     def _transfer_of_two_tables(self):
-        lottery_tickets_diapason = SpreadSheet().realization_of_lottery_receipts()
+        lottery_tickets_diapason = WorkSheet().realization_of_lottery_receipts()
+        result_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row')) + 6
+        reward = self._get_cell_value('K', result_row)
+        return reward
+
+        # Общая сумма двух таблиц по продажам
+    def _sales_of_two_tables(self):
+        lottery_tickets_diapason = WorkSheet().realization_of_lottery_receipts()
+        result_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row')) + 3
+        reward = self._get_cell_value('O', result_row)
+        return reward
+
+    # Общая сумма двух таблиц по выплатам
+    def _payment_of_two_tables(self):
+        lottery_tickets_diapason = WorkSheet().realization_of_lottery_receipts()
         result_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row')) + 4
-        reward = self._get_cell_value('I', result_row)
+        reward = self._get_cell_value('O', result_row)
         return reward
 
 
-class Asserts(CommonFunctions):
+class AgentAsserts(CommonFunctions):
     # Функция для подсчета итоговых данных
     # в таблицах "Реализация лотерейных билетов" и "Реализация лотерейных квитанций"
     def _counting_values_in_column(self, table, column, data_type='int'):
         total = 0
         if table == 'realization_tickets':
-            diapason = SpreadSheet().realization_of_lottery_tickets()
+            diapason = WorkSheet().realization_of_lottery_tickets()
         elif table == 'realization_receipts':
-            diapason = SpreadSheet().realization_of_lottery_receipts()
+            diapason = WorkSheet().realization_of_lottery_receipts()
 
         min_row = int(get_boundary_values(diapason, 'min_row'))
         max_row = int(get_boundary_values(diapason, 'max_row'))
@@ -179,73 +206,71 @@ class Asserts(CommonFunctions):
 
     # "Реализация лотерейных билетов"
     def _sold_number_tickets(self):
-        return Asserts()._counting_values_in_column('realization_tickets', 8)
+        return AgentAsserts()._counting_values_in_column('realization_tickets', 6)
 
     def _sold_amount_tickets(self):
-        return Asserts()._counting_values_in_column('realization_tickets', 9)
+        return AgentAsserts()._counting_values_in_column('realization_tickets', 7)
 
     def _paid_number_tickets(self):
-        return Asserts()._counting_values_in_column('realization_tickets', 11)
+        return AgentAsserts()._counting_values_in_column('realization_tickets', 11)
 
     def _paid_amount_tickets(self):
-        return Asserts()._counting_values_in_column('realization_tickets', 13)
+        return AgentAsserts()._counting_values_in_column('realization_tickets', 12)
 
     def _reward_tickets(self):
-        return Asserts()._counting_values_in_column('realization_tickets', 16, 'float')
+        return AgentAsserts()._counting_values_in_column('realization_tickets', 14, 'float')
 
     def _transfer_tickets(self):
-        return Asserts()._counting_values_in_column('realization_tickets', 17, 'float')
+        return AgentAsserts()._counting_values_in_column('realization_tickets', 15, 'float')
 
     # "Реализация лотерейных квитанций"
     def _sold_number_receipts(self):
-        return Asserts()._counting_values_in_column('realization_receipts', 3)
+        return AgentAsserts()._counting_values_in_column('realization_receipts', 3)
 
     def _sold_amount_receipts(self):
-        return Asserts()._counting_values_in_column('realization_receipts', 5)
+        return AgentAsserts()._counting_values_in_column('realization_receipts', 5)
 
     def _paid_number_receipts(self):
-        return Asserts()._counting_values_in_column('realization_receipts', 8)
+        return AgentAsserts()._counting_values_in_column('realization_receipts', 8)
 
     def _paid_amount_receipts(self):
-        return Asserts()._counting_values_in_column('realization_receipts', 10)
+        return AgentAsserts()._counting_values_in_column('realization_receipts', 10)
 
     def _reward_receipts(self):
-        return Asserts()._counting_values_in_column('realization_receipts', 14, 'float')
+        return AgentAsserts()._counting_values_in_column('realization_receipts', 14, 'float')
 
     def _transfer_receipts(self):
-        return Asserts()._counting_values_in_column('realization_receipts', 16, 'float')
+        return AgentAsserts()._counting_values_in_column('realization_receipts', 15, 'float')
 
     # Общее вознаграждение и перечисление
     def _total_rewards(self):
-        tickets = Asserts()._reward_tickets()
-        receipts = Asserts()._reward_receipts()
+        tickets = AgentAsserts()._reward_tickets()
+        receipts = AgentAsserts()._reward_receipts()
         return tickets + receipts
 
     def _total_transfer(self):
-        tickets = Asserts()._transfer_tickets()
-        receipts = Asserts()._transfer_receipts()
+        tickets = AgentAsserts()._transfer_tickets()
+        receipts = AgentAsserts()._transfer_receipts()
         return tickets + receipts
 
     # Проверка расчетов в каждой строке
     def _check_row(self, table):
         total = 0
         if table == 'realization_tickets':
-            diapason = SpreadSheet().realization_of_lottery_tickets()
+            diapason = WorkSheet().realization_of_lottery_tickets()
         elif table == 'realization_receipts':
-            diapason = SpreadSheet().realization_of_lottery_receipts()
+            diapason = WorkSheet().realization_of_lottery_receipts()
 
         min_row = int(get_boundary_values(diapason, 'min_row'))
         max_row = int(get_boundary_values(diapason, 'max_row'))
 
         for row in range(min_row, max_row):
             if table == 'realization_tickets':
-                ticket_price_column, sold_number_column, sold_amount_column, paid_amount_column = 4, 8, 9, 13
-                percent_column, reward_column, transfer_column = 15, 16, 17
+                sold_amount_column, paid_amount_column = 7, 11
+                percent_column, reward_column, transfer_column = 12, 14, 15
             elif table == 'realization_receipts':
-                ticket_price_column, sold_number_column, sold_amount_column, paid_amount_column = 1, 3, 5, 10
-                percent_column, reward_column, transfer_column = 13, 14, 16
-            ticket_price = self.sheet.cell(row=row, column=ticket_price_column).value
-            sold_number = self.sheet.cell(row=row, column=sold_number_column).value
+                sold_amount_column, paid_amount_column = 5, 8
+                percent_column, reward_column, transfer_column = 10, 14, 15
             sold_amount = self.sheet.cell(row=row, column=sold_amount_column).value
             paid_amount = self.sheet.cell(row=row, column=paid_amount_column).value
             percent = self.sheet.cell(row=row, column=percent_column).value
@@ -253,11 +278,6 @@ class Asserts(CommonFunctions):
             transfer = float(self.sheet.cell(row=row, column=transfer_column).value)
 
             try:
-                # Подсчет и сверка
-                if table == 'realization_tickets':
-                    count_sold_amount = ticket_price * sold_number
-                    assert count_sold_amount == sold_amount
-
                 count_reward = round(sold_amount * (percent / 100), 1)
                 assert count_reward == round(reward, 1)
 

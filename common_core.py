@@ -1,7 +1,8 @@
 from openpyxl import load_workbook
 from sales_report import ReportSalesData, CountTicketSales
 from payment_report import ReportPaymentsData, CountTicketPayments
-from branch_report import ReportBranchData, Asserts
+from branch_report import ReportBranchData, BranchAsserts
+from agent_report import ReportAgentData, AgentAsserts
 import report_of_checking
 
 def editing_cells():
@@ -207,21 +208,19 @@ def input_data():
         ("F38", f"{ReportBranchData()._total_values_lottery_receipts('transfer')} руб"),
         # РАЗДЕЛИТЕЛЬ
         ("D41", "Подсчет по столбцу \"Реализовано бил..\""),
-        ("B41", f"{Asserts()._sold_number_tickets()} шт"), ("F41", f"{Asserts()._sold_number_receipts()} шт"),
-        ("B42", f"{Asserts()._sold_amount_tickets()} руб"), ("F42", f"{Asserts()._sold_amount_receipts()} руб"),
+        ("B41", f"{BranchAsserts()._sold_number_tickets()} шт"), ("F41", f"{BranchAsserts()._sold_number_receipts()} шт"),
+        ("B42", f"{BranchAsserts()._sold_amount_tickets()} руб"), ("F42", f"{BranchAsserts()._sold_amount_receipts()} руб"),
         ("D43", "Подсчет по столбцу \"Выплачено выигр..\""),
-        ("B43", f"{Asserts()._paid_number_tickets()} шт"), ("F43", f"{Asserts()._paid_number_receipts()} шт"),
-        ("B44", f"{Asserts()._paid_amount_tickets()} руб"), ("F44", f"{Asserts()._paid_amount_receipts()} руб"),
+        ("B43", f"{BranchAsserts()._paid_number_tickets()} шт"), ("F43", f"{BranchAsserts()._paid_number_receipts()} шт"),
+        ("B44", f"{BranchAsserts()._paid_amount_tickets()} руб"), ("F44", f"{BranchAsserts()._paid_amount_receipts()} руб"),
         ("D45", "Подсчет по столбцу \"Вознаграждение Ф..\""),
-        ("B45", f"{Asserts()._reward_tickets()} руб"), ("F45", f"{Asserts()._reward_receipts()} руб"),
+        ("B45", f"{BranchAsserts()._reward_tickets()} руб"), ("F45", f"{BranchAsserts()._reward_receipts()} руб"),
         ("D47", "Подсчет по столбцу \"Подлежит перечис..\""),
-        ("B47", f"{Asserts()._transfer_tickets()} руб"), ("F47", f"{Asserts()._transfer_receipts()} руб"),
+        ("B47", f"{BranchAsserts()._transfer_tickets()} руб"), ("F47", f"{BranchAsserts()._transfer_receipts()} руб"),
         ("C49", "Расчет для каждой строки верный?\nЕсли нет, то на какой строке?"),
-        ("B49", f"{Asserts()._check_row('realization_tickets')}"), ("G49", f"{Asserts()._check_row('realization_receipts')}"),
+        ("B49", f"{BranchAsserts()._check_row('realization_tickets')}"), ("G49", f"{BranchAsserts()._check_row('realization_receipts')}"),
         ("B51", f"Общее вознаграждение филиала составило:\n{ReportBranchData()._reward_of_two_tables()} руб"),
         ("B53", f"Общая сумма к перечислению на расч.счет составляет:\n{ReportBranchData()._transfer_of_two_tables()} руб"),
-
-
 
         # Отчет агента
         ("J28", "Отчет агента"),
@@ -229,17 +228,42 @@ def input_data():
         ("J30", "Сумма всех проданных\nтиражно-бумажных и открыток"),
         ("M30", "Сумма всех проданных\nэлектронных и купонов"),
         ("L32", "Продажа"),
+        ("J32", f"{ReportAgentData()._total_values_lottery_tickets('sold_number')} шт"),
+        ("J33", f"{ReportAgentData()._total_values_lottery_tickets('sold_amount')} руб"),
+        ("N32", f"{ReportAgentData()._total_values_lottery_receipts('sold_number')} шт"),
+        ("N33", f"{ReportAgentData()._total_values_lottery_receipts('sold_amount')} руб"),
         ("L34", "Выплата"),
+        ("J34", f"{ReportAgentData()._total_values_lottery_tickets('paid_number')} шт"),
+        ("J35", f"{ReportAgentData()._total_values_lottery_tickets('paid_amount')} руб"),
+        ("N34", f"{ReportAgentData()._total_values_lottery_receipts('paid_number')} шт"),
+        ("N35", f"{ReportAgentData()._total_values_lottery_receipts('paid_amount')} руб"),
         ("L36", "Вознаграждение Филиала"),
+        ("J36", f"{ReportAgentData()._total_values_lottery_tickets('reward')} руб"),
+        ("N36", f"{ReportAgentData()._total_values_lottery_receipts('reward')} руб"),
         ("L38", "Перечислению за отчетный период"),
+        ("J38", f"{ReportAgentData()._total_values_lottery_tickets('transfer')} руб"),
+        ("N38", f"{ReportAgentData()._total_values_lottery_receipts('transfer')} руб"),
             # РАЗДЕЛИТЕЛЬ
         ("L41", "Подсчет по столбцу \"Реализовано бил..\""),
+        ("J41", f"{AgentAsserts()._sold_number_tickets()} шт"),
+        ("N41", f"{AgentAsserts()._sold_number_receipts()} шт"),
+        ("J42", f"{AgentAsserts()._sold_amount_tickets()} руб"),
+        ("N42", f"{AgentAsserts()._sold_amount_receipts()} руб"),
         ("L43", "Подсчет по столбцу \"Выплачено выигр..\""),
+        ("J43", f"{AgentAsserts()._paid_number_tickets()} шт"),
+        ("N43", f"{AgentAsserts()._paid_number_receipts()} шт"),
+        ("J44", f"{AgentAsserts()._paid_amount_tickets()} руб"),
+        ("N44", f"{AgentAsserts()._paid_amount_receipts()} руб"),
         ("L45", "Подсчет по столбцу \"Вознаграждение Ф..\""),
+        ("J45", f"{AgentAsserts()._reward_tickets()} руб"), ("N45", f"{AgentAsserts()._reward_receipts()} руб"),
         ("L47", "Подсчет по столбцу \"Подлежит перечис..\""),
+        ("J47", f"{AgentAsserts()._transfer_tickets()} руб"), ("N47", f"{AgentAsserts()._transfer_receipts()} руб"),
         ("K49", "Расчет для каждой строки верный?\nЕсли нет, то на какой строке?"),
-        ("J51", "Вознаграждение филиала составило:\n xxx"),
-        ("J53", "К перечислению на расч.счет следует:\n xxx"),
+        ("J49", f"{AgentAsserts()._check_row('realization_tickets')}"),
+        ("O49", f"{AgentAsserts()._check_row('realization_receipts')}"),
+        ("J51", f"Общее вознаграждение агента составило:\n{ReportAgentData()._reward_of_two_tables()} руб"),
+        ("J53",
+         f"Общая сумма к перечислению на расч.счет составляет:\n{ReportAgentData()._transfer_of_two_tables()} руб"),
 
         # Отчет агента для бестиражных лотерей
         ("R28", "Отчет агента для бестиражных лотерей"),
@@ -322,23 +346,47 @@ def check_and_painting():
         ("L24", CountTicketPayments().win_amount_less_15000(), 'Отсутствуют билеты с выигрышем более 15000 руб'),
 
         # Отчет филиала
-        ("B41", Asserts()._sold_number_tickets(), ReportBranchData()._total_values_lottery_tickets('sold_number')),
-        ("F41", Asserts()._sold_number_receipts(), ReportBranchData()._total_values_lottery_receipts('sold_number')),
-        ("B42", Asserts()._sold_amount_tickets(), ReportBranchData()._total_values_lottery_tickets('sold_amount')),
-        ("F42", Asserts()._sold_amount_receipts(), ReportBranchData()._total_values_lottery_receipts('sold_amount')),
-        ("B43", Asserts()._paid_number_tickets(), ReportBranchData()._total_values_lottery_tickets('paid_number')),
-        ("F43", Asserts()._paid_number_receipts(), ReportBranchData()._total_values_lottery_receipts('paid_number')),
-        ("B44", Asserts()._paid_amount_tickets(), ReportBranchData()._total_values_lottery_tickets('paid_amount')),
-        ("F44", Asserts()._paid_amount_receipts(), ReportBranchData()._total_values_lottery_receipts('paid_amount')),
-        ("B45", Asserts()._reward_tickets(), ReportBranchData()._total_values_lottery_tickets('reward')),
-        ("F45", Asserts()._reward_receipts(), ReportBranchData()._total_values_lottery_receipts('reward')),
-        ("B47", Asserts()._transfer_tickets(), ReportBranchData()._total_values_lottery_tickets('transfer')),
-        ("F47", Asserts()._transfer_receipts(), ReportBranchData()._total_values_lottery_receipts('transfer')),
+        ("B41", BranchAsserts()._sold_number_tickets(), ReportBranchData()._total_values_lottery_tickets('sold_number')),
+        ("F41", BranchAsserts()._sold_number_receipts(), ReportBranchData()._total_values_lottery_receipts('sold_number')),
+        ("B42", BranchAsserts()._sold_amount_tickets(), ReportBranchData()._total_values_lottery_tickets('sold_amount')),
+        ("F42", BranchAsserts()._sold_amount_receipts(), ReportBranchData()._total_values_lottery_receipts('sold_amount')),
+        ("B43", BranchAsserts()._paid_number_tickets(), ReportBranchData()._total_values_lottery_tickets('paid_number')),
+        ("F43", BranchAsserts()._paid_number_receipts(), ReportBranchData()._total_values_lottery_receipts('paid_number')),
+        ("B44", BranchAsserts()._paid_amount_tickets(), ReportBranchData()._total_values_lottery_tickets('paid_amount')),
+        ("F44", BranchAsserts()._paid_amount_receipts(), ReportBranchData()._total_values_lottery_receipts('paid_amount')),
+        ("B45", BranchAsserts()._reward_tickets(), ReportBranchData()._total_values_lottery_tickets('reward')),
+        ("F45", BranchAsserts()._reward_receipts(), ReportBranchData()._total_values_lottery_receipts('reward')),
+        ("B47", BranchAsserts()._transfer_tickets(), ReportBranchData()._total_values_lottery_tickets('transfer')),
+        ("F47", BranchAsserts()._transfer_receipts(), ReportBranchData()._total_values_lottery_receipts('transfer')),
 
-        ("B49", Asserts()._check_row('realization_tickets'), 'ДА'),
-        ("G49", Asserts()._check_row('realization_receipts'), 'ДА'),
-        ("B51", ReportBranchData()._reward_of_two_tables(), Asserts()._total_rewards()),
-        ("B53", ReportBranchData()._transfer_of_two_tables(), Asserts()._total_transfer())
+        ("B49", BranchAsserts()._check_row('realization_tickets'), 'ДА'),
+        ("G49", BranchAsserts()._check_row('realization_receipts'), 'ДА'),
+        ("B51", ReportBranchData()._reward_of_two_tables(), BranchAsserts()._total_rewards()),
+        ("B53", ReportBranchData()._transfer_of_two_tables(), BranchAsserts()._total_transfer()),
+
+        # Отчет агента
+        ("J41", AgentAsserts()._sold_number_tickets(), ReportAgentData()._total_values_lottery_tickets('sold_number')),
+        (
+        "N41", AgentAsserts()._sold_number_receipts(), ReportAgentData()._total_values_lottery_receipts('sold_number')),
+        ("J42", AgentAsserts()._sold_amount_tickets(), ReportAgentData()._total_values_lottery_tickets('sold_amount')),
+        (
+        "N42", AgentAsserts()._sold_amount_receipts(), ReportAgentData()._total_values_lottery_receipts('sold_amount')),
+        ("J43", AgentAsserts()._paid_number_tickets(), ReportAgentData()._total_values_lottery_tickets('paid_number')),
+        (
+        "N43", AgentAsserts()._paid_number_receipts(), ReportAgentData()._total_values_lottery_receipts('paid_number')),
+        ("J44", AgentAsserts()._paid_amount_tickets(), ReportAgentData()._total_values_lottery_tickets('paid_amount')),
+        (
+        "N44", AgentAsserts()._paid_amount_receipts(), ReportAgentData()._total_values_lottery_receipts('paid_amount')),
+        ("J45", AgentAsserts()._reward_tickets(), ReportAgentData()._total_values_lottery_tickets('reward')),
+        ("N45", AgentAsserts()._reward_receipts(), ReportAgentData()._total_values_lottery_receipts('reward')),
+        ("J47", AgentAsserts()._transfer_tickets(), ReportAgentData()._total_values_lottery_tickets('transfer')),
+        ("N47", AgentAsserts()._transfer_receipts(), ReportAgentData()._total_values_lottery_receipts('transfer')),
+
+        ("J49", AgentAsserts()._check_row('realization_tickets'), 'ДА'),
+        ("O49", AgentAsserts()._check_row('realization_receipts'), 'ДА'),
+        ("J51", ReportAgentData()._reward_of_two_tables(), AgentAsserts()._total_rewards()),
+        ("J53", ReportAgentData()._transfer_of_two_tables(), AgentAsserts()._total_transfer())
+
     ]
     return array
 

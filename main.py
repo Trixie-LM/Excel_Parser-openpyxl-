@@ -4,6 +4,7 @@ from paid_payments_registry import PreCondition, paid_lottery_names_list
 from openpyxl import Workbook
 import common_core
 
+print('Создаем файл "Итоговый отчет" и выполняем предусловия...')
 file = 'C:/Users/Trixie_LM/Desktop/1C/Итоговый отчет.xlsx'
 
 # Создание файла "Итоговый отчет"
@@ -26,6 +27,7 @@ for row in paid_lottery_names_list():
 
 class TestingReports:
     # Редактирование ячеек в файле
+    print('Соединяем ячейки и устанавливаем стиль...')
     for cell in common_core.editing_cells():
         double = Side(border_style="double", color="FF000000")
         startCell = cell.split(':')[0]
@@ -35,6 +37,7 @@ class TestingReports:
         sheet[startCell].border = Border(top=double, bottom=double, left=double, right=double)
         sheet.merge_cells(cell)
 
+    print('Импортируем данные в таблицу...')
     # Импорт данных в таблицу
     for columnNumber, text in common_core.input_data():
         sheet[columnNumber].value = text
@@ -46,6 +49,7 @@ class TestingReports:
     sheet.column_dimensions["U"].width = 12
     sheet.column_dimensions["V"].width = 12
 
+    print('Проверяем значения между собой и красим ячейки...')
     # Сверка данных и заливка фона ячейки
     for cellNumber, numberInReport, verifiable in common_core.check_and_painting():
         if str(numberInReport) == str(verifiable):
