@@ -4,7 +4,7 @@ from util import get_cell_value, get_boundary_values
 
 class CommonFunctions:
     def __init__(self):
-        self.file_path = 'C:/Users/Trixie_LM/Desktop/1C/Отчет филиала.xlsx'
+        self.file_path = 'C:/Users/Trixie_LM/Desktop/1C/Отчет агента.xlsx'
         self.book = load_workbook(filename=self.file_path, data_only=True)
         self.sheet = self.book.active
 
