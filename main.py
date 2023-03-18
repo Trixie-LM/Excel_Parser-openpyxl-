@@ -1,4 +1,3 @@
-from openpyxl.reader.excel import load_workbook
 from openpyxl.styles import Border, Side, PatternFill, Font, Alignment
 from paid_payments_registry import PreCondition, paid_lottery_names_list
 from openpyxl import Workbook
@@ -16,8 +15,10 @@ sheet.title = "Итоговый отчет"
 PreCondition.copying_table()
 PreCondition.delete_rows()
 
+
 #TODO: добавить в отчет для проверки
 # Копирую таблицу "реестр выплаченных выигрышей" из файла в основной
+
 for row in paid_lottery_names_list():
     reversed_row = reversed(row)
     for cell in reversed_row:
@@ -28,6 +29,7 @@ for row in paid_lottery_names_list():
 class TestingReports:
     # Редактирование ячеек в файле
     print('Соединяем ячейки и устанавливаем стиль...')
+
     for cell in common_core.editing_cells():
         double = Side(border_style="double", color="FF000000")
         startCell = cell.split(':')[0]

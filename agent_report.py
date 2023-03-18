@@ -79,7 +79,7 @@ class WorkSheet(CommonFunctions):
         else:
             print('Диапазон не найден')
 
-    #TODO: нужен ли метод?
+    # TODO: нужен ли метод?
     def AFPS_MOSCOW_tickets(self):
         branch = "УФПС Г. МОСКВЫ"
         diapason = WorkSheet().realization_of_lottery_tickets()
@@ -165,6 +165,7 @@ class ReportAgentData(CommonFunctions):
         return reward
 
         # Общая сумма двух таблиц по продажам
+
     def _sales_of_two_tables(self):
         lottery_tickets_diapason = WorkSheet().realization_of_lottery_receipts()
         result_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row')) + 3
@@ -255,7 +256,6 @@ class AgentAsserts(CommonFunctions):
 
     # Проверка расчетов в каждой строке
     def _check_row(self, table):
-        total = 0
         if table == 'realization_tickets':
             diapason = WorkSheet().realization_of_lottery_tickets()
         elif table == 'realization_receipts':
@@ -287,5 +287,3 @@ class AgentAsserts(CommonFunctions):
                 return "ДА"
             except:
                 return 'НЕТ!\nСтрока ' + str(row)
-
-

@@ -58,7 +58,7 @@ class ReportPaymentsData:
         return passedAssertions
 
 
-class CountTicketPayments:
+class PaymentsAsserts:
 
     @staticmethod
     def total_quantity():

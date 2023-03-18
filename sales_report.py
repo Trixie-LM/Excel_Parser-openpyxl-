@@ -63,7 +63,7 @@ class ReportSalesData(SalesDataBase):
         return passedAssertions
 
 
-class CountTicketSales(SalesDataBase):
+class SalesAsserts(SalesDataBase):
 
     def total_quantity(self):
         tickets_amount = 0

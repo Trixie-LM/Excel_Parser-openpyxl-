@@ -228,7 +228,6 @@ class BranchAsserts(CommonFunctions):
 
     # Проверка расчетов в каждой строке
     def _check_row(self, table):
-        total = 0
         if table == 'realization_tickets':
             diapason = SpreadSheet().realization_of_lottery_tickets()
         elif table == 'realization_receipts':

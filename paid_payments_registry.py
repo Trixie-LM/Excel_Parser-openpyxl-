@@ -1,6 +1,6 @@
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
-from payment_report import CountTicketPayments
+from payment_report import PaymentsAsserts
 
 file = 'C:/Users/Trixie_LM/Desktop/1C/Реестр выплаченных выигрышей.xlsx'
 book = load_workbook(filename=file)
@@ -67,7 +67,7 @@ def paid_lottery_names_list():
 # TODO: добавить в отчет для проверки
 # Поиск расхождение между реестром и отчетом по выплатам
 def discrepancy_reports():
-    remaining_tickets = CountTicketPayments.collecting_numbers()
+    remaining_tickets = PaymentsAsserts.collecting_numbers()
     try:
         for number in range(3, int(sheet.max_column), 4):
             ticket_numbers_column = get_column_letter(number)
