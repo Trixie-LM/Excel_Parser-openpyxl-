@@ -2,6 +2,12 @@ from openpyxl.styles import Border, Side, PatternFill, Font, Alignment
 from paid_payments_registry import PreCondition, paid_lottery_names_list
 from openpyxl import Workbook
 import common_core
+import time
+
+start_time = time.monotonic()
+
+
+
 
 print('Создаем файл "Итоговый отчет" и выполняем предусловия...')
 file = 'C:/Users/Trixie_LM/Desktop/1C/Итоговый отчет.xlsx'
@@ -44,6 +50,8 @@ class TestingReports:
     for columnNumber, text in common_core.input_data():
         sheet[columnNumber].value = text
 
+    print(f'На импорт данных ушло {time.monotonic() - start_time:0.4f} секунд')
+    start_time = time.monotonic()
 
     #TODO: найти решение лучше
     sheet.column_dimensions["F"].auto_size = True
@@ -59,7 +67,9 @@ class TestingReports:
         else:
             sheet[cellNumber].fill = PatternFill('solid', fgColor="FF0000")
 
-    book.save(file)
+    print(f'На проверку значений и покраску клеток ушло {time.monotonic() - start_time:0.4f} секунд')
+    start_time = time.monotonic()
+
 
 
 book.save(file)

@@ -1,6 +1,6 @@
 from openpyxl import load_workbook
 from numpy import unique
-from util import get_cell_value
+from util import _get_cell_value
 
 
 class SalesDataBase:
@@ -10,7 +10,7 @@ class SalesDataBase:
         self.sheet = self.book.active
 
     def _get_cell_value(self, column_letter, idx):
-        return get_cell_value(column_letter, idx, self.sheet)
+        return _get_cell_value(column_letter, idx, self.sheet)
 
 class ReportSalesData(SalesDataBase):
 

@@ -1,5 +1,5 @@
 from openpyxl import load_workbook
-from util import get_cell_value, get_boundary_values
+from util import _get_cell_value, get_boundary_values
 
 
 class CommonFunctions:
@@ -9,7 +9,7 @@ class CommonFunctions:
         self.sheet = self.book.active
 
     def _get_cell_value(self, column_letter, idx):
-        return get_cell_value(column_letter, idx, self.sheet)
+        return _get_cell_value(column_letter, idx, self.sheet)
 
 
 class SpreadSheet(CommonFunctions):
@@ -82,7 +82,7 @@ class SpreadSheet(CommonFunctions):
 
 class ReportBranchData(CommonFunctions):
     # Беру данные из "ИТОГО" в таблице "Реализация лотерейных билетов"
-    def _total_values_lottery_tickets(self, column):
+    def total_values_lottery_tickets(self, column):
         lottery_tickets_diapason = SpreadSheet().realization_of_lottery_tickets()
         result_row = get_boundary_values(lottery_tickets_diapason, 'max_row')
         # Продажи
@@ -110,7 +110,7 @@ class ReportBranchData(CommonFunctions):
             return transfer
 
     # Беру данные из "ИТОГО" в таблице "Реализация лотерейных квитанций"
-    def _total_values_lottery_receipts(self, column):
+    def total_values_lottery_receipts(self, column):
         lottery_tickets_diapason = SpreadSheet().realization_of_lottery_receipts()
         result_row = get_boundary_values(lottery_tickets_diapason, 'max_row')
         # Продажи
@@ -138,14 +138,14 @@ class ReportBranchData(CommonFunctions):
             return transfer
 
     # Общая сумма двух таблиц по вознаграждению
-    def _reward_of_two_tables(self):
+    def reward_of_two_tables(self):
         lottery_tickets_diapason = SpreadSheet().realization_of_lottery_receipts()
         result_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row')) + 3
         reward = self._get_cell_value('I', result_row)
         return reward
 
     # Общая сумма двух таблиц по перечислению средств
-    def _transfer_of_two_tables(self):
+    def transfer_of_two_tables(self):
         lottery_tickets_diapason = SpreadSheet().realization_of_lottery_receipts()
         result_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row')) + 4
         reward = self._get_cell_value('I', result_row)
@@ -155,7 +155,7 @@ class ReportBranchData(CommonFunctions):
 class BranchAsserts(CommonFunctions):
     # Функция для подсчета итоговых данных
     # в таблицах "Реализация лотерейных билетов" и "Реализация лотерейных квитанций"
-    def _counting_values_in_column(self, table, column, data_type='int'):
+    def counting_values_in_column(self, table, column, data_type='int'):
         total = 0
         if table == 'realization_tickets':
             diapason = SpreadSheet().realization_of_lottery_tickets()
@@ -178,56 +178,56 @@ class BranchAsserts(CommonFunctions):
             return total
 
     # "Реализация лотерейных билетов"
-    def _sold_number_tickets(self):
-        return BranchAsserts()._counting_values_in_column('realization_tickets', 8)
+    def sold_number_tickets(self):
+        return BranchAsserts().counting_values_in_column('realization_tickets', 8)
 
-    def _sold_amount_tickets(self):
-        return BranchAsserts()._counting_values_in_column('realization_tickets', 9)
+    def sold_amount_tickets(self):
+        return BranchAsserts().counting_values_in_column('realization_tickets', 9)
 
-    def _paid_number_tickets(self):
-        return BranchAsserts()._counting_values_in_column('realization_tickets', 11)
+    def paid_number_tickets(self):
+        return BranchAsserts().counting_values_in_column('realization_tickets', 11)
 
-    def _paid_amount_tickets(self):
-        return BranchAsserts()._counting_values_in_column('realization_tickets', 13)
+    def paid_amount_tickets(self):
+        return BranchAsserts().counting_values_in_column('realization_tickets', 13)
 
-    def _reward_tickets(self):
-        return BranchAsserts()._counting_values_in_column('realization_tickets', 16, 'float')
+    def reward_tickets(self):
+        return BranchAsserts().counting_values_in_column('realization_tickets', 16, 'float')
 
-    def _transfer_tickets(self):
-        return BranchAsserts()._counting_values_in_column('realization_tickets', 17, 'float')
+    def transfer_tickets(self):
+        return BranchAsserts().counting_values_in_column('realization_tickets', 17, 'float')
 
     # "Реализация лотерейных квитанций"
-    def _sold_number_receipts(self):
-        return BranchAsserts()._counting_values_in_column('realization_receipts', 3)
+    def sold_number_receipts(self):
+        return BranchAsserts().counting_values_in_column('realization_receipts', 3)
 
-    def _sold_amount_receipts(self):
-        return BranchAsserts()._counting_values_in_column('realization_receipts', 5)
+    def sold_amount_receipts(self):
+        return BranchAsserts().counting_values_in_column('realization_receipts', 5)
 
-    def _paid_number_receipts(self):
-        return BranchAsserts()._counting_values_in_column('realization_receipts', 8)
+    def paid_number_receipts(self):
+        return BranchAsserts().counting_values_in_column('realization_receipts', 8)
 
-    def _paid_amount_receipts(self):
-        return BranchAsserts()._counting_values_in_column('realization_receipts', 10)
+    def paid_amount_receipts(self):
+        return BranchAsserts().counting_values_in_column('realization_receipts', 10)
 
-    def _reward_receipts(self):
-        return BranchAsserts()._counting_values_in_column('realization_receipts', 14, 'float')
+    def reward_receipts(self):
+        return BranchAsserts().counting_values_in_column('realization_receipts', 14, 'float')
 
-    def _transfer_receipts(self):
-        return BranchAsserts()._counting_values_in_column('realization_receipts', 16, 'float')
+    def transfer_receipts(self):
+        return BranchAsserts().counting_values_in_column('realization_receipts', 16, 'float')
 
     # Общее вознаграждение и перечисление
-    def _total_rewards(self):
-        tickets = BranchAsserts()._reward_tickets()
-        receipts = BranchAsserts()._reward_receipts()
+    def total_rewards(self):
+        tickets = BranchAsserts().reward_tickets()
+        receipts = BranchAsserts().reward_receipts()
         return tickets + receipts
 
-    def _total_transfer(self):
-        tickets = BranchAsserts()._transfer_tickets()
-        receipts = BranchAsserts()._transfer_receipts()
+    def total_transfer(self):
+        tickets = BranchAsserts().transfer_tickets()
+        receipts = BranchAsserts().transfer_receipts()
         return tickets + receipts
 
     # Проверка расчетов в каждой строке
-    def _check_row(self, table):
+    def check_row(self, table):
         if table == 'realization_tickets':
             diapason = SpreadSheet().realization_of_lottery_tickets()
         elif table == 'realization_receipts':
