@@ -12,7 +12,12 @@ class CommonFunctions:
         return _get_cell_value(column_letter, idx, self.sheet)
 
 
-class SpreadSheet(CommonFunctions):
+class WorkSheet(CommonFunctions):
+    def __init__(self):
+        super().__init__()
+        self.diapason = self.realization_of_lottery_tickets()
+        self.qqq = self.realization_of_lottery_receipts()
+
     def realization_of_lottery_tickets(self):
         # задаем начальное и конечное значение для поиска диапазона
         start_value_row = 'Наименование лотереи'
@@ -79,12 +84,14 @@ class SpreadSheet(CommonFunctions):
         else:
             print('Диапазон не найден')
 
+# Объекты класса WorkSheet
+tickets_table_range = WorkSheet().realization_of_lottery_tickets()
+receipts_table_range = WorkSheet().realization_of_lottery_receipts()
 
 class ReportBranchData(CommonFunctions):
     # Беру данные из "ИТОГО" в таблице "Реализация лотерейных билетов"
     def total_values_lottery_tickets(self, column):
-        lottery_tickets_diapason = SpreadSheet().realization_of_lottery_tickets()
-        result_row = get_boundary_values(lottery_tickets_diapason, 'max_row')
+        result_row = get_boundary_values(tickets_table_range, 'max_row')
         # Продажи
         sold_number = self._get_cell_value('H', result_row)
         sold_amount = self._get_cell_value('I', result_row)
@@ -111,8 +118,7 @@ class ReportBranchData(CommonFunctions):
 
     # Беру данные из "ИТОГО" в таблице "Реализация лотерейных квитанций"
     def total_values_lottery_receipts(self, column):
-        lottery_tickets_diapason = SpreadSheet().realization_of_lottery_receipts()
-        result_row = get_boundary_values(lottery_tickets_diapason, 'max_row')
+        result_row = get_boundary_values(receipts_table_range, 'max_row')
         # Продажи
         sold_number = self._get_cell_value('C', result_row)
         sold_amount = self._get_cell_value('E', result_row)
@@ -139,28 +145,30 @@ class ReportBranchData(CommonFunctions):
 
     # Общая сумма двух таблиц по вознаграждению
     def reward_of_two_tables(self):
-        lottery_tickets_diapason = SpreadSheet().realization_of_lottery_receipts()
-        result_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row')) + 3
+        result_row = int(get_boundary_values(receipts_table_range, 'max_row')) + 3
         reward = self._get_cell_value('I', result_row)
         return reward
 
     # Общая сумма двух таблиц по перечислению средств
     def transfer_of_two_tables(self):
-        lottery_tickets_diapason = SpreadSheet().realization_of_lottery_receipts()
-        result_row = int(get_boundary_values(lottery_tickets_diapason, 'max_row')) + 4
+        result_row = int(get_boundary_values(receipts_table_range, 'max_row')) + 4
         reward = self._get_cell_value('I', result_row)
         return reward
 
 
 class BranchAsserts(CommonFunctions):
-    # Функция для подсчета итоговых данных
-    # в таблицах "Реализация лотерейных билетов" и "Реализация лотерейных квитанций"
+    """
+        Функция для подсчета итоговых данных
+        в таблицах "Реализация лотерейных билетов" и "Реализация лотерейных квитанций"
+    """
     def counting_values_in_column(self, table, column, data_type='int'):
         total = 0
         if table == 'realization_tickets':
-            diapason = SpreadSheet().realization_of_lottery_tickets()
+            diapason = tickets_table_range
         elif table == 'realization_receipts':
-            diapason = SpreadSheet().realization_of_lottery_receipts()
+            diapason = receipts_table_range
+        else:
+            raise ValueError('Неверный тип таблицы')
 
         min_row = int(get_boundary_values(diapason, 'min_row'))
         max_row = int(get_boundary_values(diapason, 'max_row'))
@@ -179,77 +187,87 @@ class BranchAsserts(CommonFunctions):
 
     # "Реализация лотерейных билетов"
     def sold_number_tickets(self):
-        return BranchAsserts().counting_values_in_column('realization_tickets', 8)
+        return self.counting_values_in_column('realization_tickets', 8)
 
     def sold_amount_tickets(self):
-        return BranchAsserts().counting_values_in_column('realization_tickets', 9)
+        return self.counting_values_in_column('realization_tickets', 9)
 
     def paid_number_tickets(self):
-        return BranchAsserts().counting_values_in_column('realization_tickets', 11)
+        return self.counting_values_in_column('realization_tickets', 11)
 
     def paid_amount_tickets(self):
-        return BranchAsserts().counting_values_in_column('realization_tickets', 13)
+        return self.counting_values_in_column('realization_tickets', 13)
 
     def reward_tickets(self):
-        return BranchAsserts().counting_values_in_column('realization_tickets', 16, 'float')
+        return self.counting_values_in_column('realization_tickets', 16, 'float')
 
     def transfer_tickets(self):
-        return BranchAsserts().counting_values_in_column('realization_tickets', 17, 'float')
+        return self.counting_values_in_column('realization_tickets', 17, 'float')
 
     # "Реализация лотерейных квитанций"
     def sold_number_receipts(self):
-        return BranchAsserts().counting_values_in_column('realization_receipts', 3)
+        return self.counting_values_in_column('realization_receipts', 3)
 
     def sold_amount_receipts(self):
-        return BranchAsserts().counting_values_in_column('realization_receipts', 5)
+        return self.counting_values_in_column('realization_receipts', 5)
 
     def paid_number_receipts(self):
-        return BranchAsserts().counting_values_in_column('realization_receipts', 8)
+        return self.counting_values_in_column('realization_receipts', 8)
 
     def paid_amount_receipts(self):
-        return BranchAsserts().counting_values_in_column('realization_receipts', 10)
+        return self.counting_values_in_column('realization_receipts', 10)
 
     def reward_receipts(self):
-        return BranchAsserts().counting_values_in_column('realization_receipts', 14, 'float')
+        return self.counting_values_in_column('realization_receipts', 14, 'float')
 
     def transfer_receipts(self):
-        return BranchAsserts().counting_values_in_column('realization_receipts', 16, 'float')
+        return self.counting_values_in_column('realization_receipts', 16, 'float')
 
     # Общее вознаграждение и перечисление
     def total_rewards(self):
-        tickets = BranchAsserts().reward_tickets()
-        receipts = BranchAsserts().reward_receipts()
+        tickets = self.reward_tickets()
+        receipts = self.reward_receipts()
         return tickets + receipts
 
     def total_transfer(self):
-        tickets = BranchAsserts().transfer_tickets()
-        receipts = BranchAsserts().transfer_receipts()
+        tickets = self.transfer_tickets()
+        receipts = self.transfer_receipts()
         return tickets + receipts
 
     # Проверка расчетов в каждой строке
     def check_row(self, table):
         if table == 'realization_tickets':
-            diapason = SpreadSheet().realization_of_lottery_tickets()
+            diapason = tickets_table_range
         elif table == 'realization_receipts':
-            diapason = SpreadSheet().realization_of_lottery_receipts()
+            diapason = receipts_table_range
+        else:
+            raise ValueError('Неверный тип таблицы')
 
         min_row = int(get_boundary_values(diapason, 'min_row'))
         max_row = int(get_boundary_values(diapason, 'max_row'))
 
         for row in range(min_row, max_row):
-            if table == 'realization_tickets':
-                ticket_price_column, sold_number_column, sold_amount_column, paid_amount_column = 4, 8, 9, 13
-                percent_column, reward_column, transfer_column = 15, 16, 17
-            elif table == 'realization_receipts':
-                ticket_price_column, sold_number_column, sold_amount_column, paid_amount_column = 1, 3, 5, 10
-                percent_column, reward_column, transfer_column = 13, 14, 16
-            ticket_price = self.sheet.cell(row=row, column=ticket_price_column).value
-            sold_number = self.sheet.cell(row=row, column=sold_number_column).value
-            sold_amount = self.sheet.cell(row=row, column=sold_amount_column).value
-            paid_amount = self.sheet.cell(row=row, column=paid_amount_column).value
-            percent = self.sheet.cell(row=row, column=percent_column).value
-            reward = float(self.sheet.cell(row=row, column=reward_column).value)
-            transfer = float(self.sheet.cell(row=row, column=transfer_column).value)
+            types = ['realization_tickets', 'realization_receipts']
+            if table not in types:
+                raise ValueError('Неверный тип таблицы')
+
+            columns = {
+                'ticket_price_column': 4 if table == 'realization_tickets' else 1,
+                'sold_number_column': 8 if table == 'realization_tickets' else 3,
+                'sold_amount_column': 9 if table == 'realization_tickets' else 5,
+                'paid_amount_column': 13 if table == 'realization_tickets' else 10,
+                'percent_column': 15 if table == 'realization_tickets' else 13,
+                'reward_column': 16 if table == 'realization_tickets' else 14,
+                'transfer_column': 17 if table == 'realization_tickets' else 16,
+            }
+
+            ticket_price = self.sheet.cell(row=row, column=columns['ticket_price_column']).value
+            sold_number = self.sheet.cell(row=row, column=columns['sold_number_column']).value
+            sold_amount = self.sheet.cell(row=row, column=columns['sold_amount_column']).value
+            paid_amount = self.sheet.cell(row=row, column=columns['paid_amount_column']).value
+            percent = self.sheet.cell(row=row, column=columns['percent_column']).value
+            reward = float(self.sheet.cell(row=row, column=columns['reward_column']).value)
+            transfer = float(self.sheet.cell(row=row, column=columns['transfer_column']).value)
 
             try:
                 # Подсчет и сверка
@@ -266,5 +284,4 @@ class BranchAsserts(CommonFunctions):
                 return "ДА"
             except:
                 return 'НЕТ!\nСтрока ' + str(row)
-
 

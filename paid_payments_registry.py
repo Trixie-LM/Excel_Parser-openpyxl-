@@ -64,7 +64,8 @@ class PreCondition:
 def paid_lottery_names_list():
     return list(add_sheet.rows)
 
-# TODO: добавить в отчет для проверки
+#TODO: добавить в отчет для проверки
+
 # Поиск расхождение между реестром и отчетом по выплатам
 def discrepancy_reports():
     remaining_tickets = PaymentsAsserts.collecting_numbers()
