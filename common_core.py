@@ -2,6 +2,7 @@ from sales_report import ReportSalesData, SalesAsserts
 from payment_report import ReportPaymentsData, PaymentsAsserts
 from branch_report import ReportBranchData, BranchAsserts
 from agent_report import ReportAgentData, AgentAsserts
+from agent_report_about_noncirculated_tickets import ReportAgentNoncirculatedData, AgentNoncirculatedAsserts
 import report_of_checking
 
 
@@ -17,6 +18,9 @@ branch_asserts = ReportBranchData()
 # Классы отчета агента
 report_agent_data = ReportAgentData()
 agent_asserts = AgentAsserts()
+# Классы отчета агента о бестиражных билетах
+report_agent_noncirculated_data = ReportAgentNoncirculatedData()
+agent_noncirculated_asserts = AgentNoncirculatedAsserts()
 
 def editing_cells():
     array = [
@@ -99,7 +103,7 @@ def editing_cells():
         "R40:S40", "R41:S41", "T40:U41",
         "R42:S43", "T42:U43", "R44:S45", "T44:U45",
         "R46:R47", "S46:U47",
-        "R48:U49", "R50:U51"
+        "R48:U49", "R50:U51", "R52:U53"
     ]
     return array
 
@@ -281,17 +285,31 @@ def input_data():
         # Отчет агента для бестиражных лотерей
         ("R28", "Отчет агента для бестиражных лотерей"),
         ("T29", "Продажа"),
+        ("R29", f"{report_agent_noncirculated_data.total_values_lottery_tickets('sold_number')} шт"),
+        ("R30", f"{report_agent_noncirculated_data.total_values_lottery_tickets('sold_amount')} руб"),
         ("T31", "Выплата"),
+        ("R31", f"{report_agent_noncirculated_data.total_values_lottery_tickets('paid_number')} шт"),
+        ("R32", f"{report_agent_noncirculated_data.total_values_lottery_tickets('paid_amount')} руб"),
         ("T33", "Вознаграждение Филиала"),
+        ("R33", f"{report_agent_noncirculated_data.total_values_lottery_tickets('reward')} руб"),
         ("T35", "Перечислению за отчетный период"),
+        ("R35", f"{report_agent_noncirculated_data.total_values_lottery_tickets('transfer')} руб"),
             # РАЗДЕЛИТЕЛЬ
         ("T38", "Подсчет по столбцу \"Реализовано бил..\""),
+        ("R38", f"{agent_noncirculated_asserts.sold_number_tickets()} шт"),
+        ("R39", f"{agent_noncirculated_asserts.sold_amount_tickets()} руб"),
         ("T40", "Подсчет по столбцу \"Выплачено выигр..\""),
+        ("R40", f"{agent_noncirculated_asserts.paid_number_tickets()} шт"),
+        ("R41", f"{agent_noncirculated_asserts.paid_amount_tickets()} руб"),
         ("T42", "Подсчет по столбцу \"Вознаграждение Ф..\""),
+        ("R42", f"{agent_noncirculated_asserts.reward_tickets()} руб"),
         ("T44", "Подсчет по столбцу \"Подлежит перечис..\""),
+        ("R44", f"{agent_noncirculated_asserts.transfer_tickets()} руб"),
         ("S46", "Расчет для каждой строки верный?\nЕсли нет, то на какой строке?"),
-        ("R48", "Вознаграждение филиала составило:\n xxx"),
-        ("R50", "К перечислению на расч.счет следует:\n xxx")
+        ("R46", f"{agent_noncirculated_asserts.check_row()}"),
+        ("R48", f"Вознаграждение агента составило:\n{report_agent_noncirculated_data.reward_under_table()} руб"),
+        ("R50", f"Сумма к перечислению Принципалу составляет:\n{report_agent_noncirculated_data.transfer_under_table_to_principal()} руб"),
+        ("R52", f"Сумма к перечислению Агенту составляет:\n{report_agent_noncirculated_data.transfer_under_table_to_agent()} руб")
     ]
     return array
 
@@ -397,7 +415,25 @@ def check_and_painting():
         ("J49", agent_asserts.check_row('realization_tickets'), 'ДА'),
         ("O49", agent_asserts.check_row('realization_receipts'), 'ДА'),
         ("J51", report_agent_data.reward_of_two_tables(), agent_asserts.total_rewards()),
-        ("J53", report_agent_data.transfer_of_two_tables(), agent_asserts.total_transfer())
+        ("J53", report_agent_data.transfer_of_two_tables(), agent_asserts.total_transfer()),
 
+        # Отчет агента о бестиражных билетах
+        ("R38", agent_noncirculated_asserts.sold_number_tickets(),
+         report_agent_noncirculated_data.total_values_lottery_tickets('sold_number')),
+        ("R39", agent_noncirculated_asserts.sold_amount_tickets(),
+         report_agent_noncirculated_data.total_values_lottery_tickets('sold_amount')),
+        ("R40", agent_noncirculated_asserts.paid_number_tickets(),
+         report_agent_noncirculated_data.total_values_lottery_tickets('paid_number')),
+        ("R41", agent_noncirculated_asserts.paid_amount_tickets(),
+         report_agent_noncirculated_data.total_values_lottery_tickets('paid_amount')),
+        ("R42", agent_noncirculated_asserts.reward_tickets(),
+         report_agent_noncirculated_data.total_values_lottery_tickets('reward')),
+        ("R44", agent_noncirculated_asserts.transfer_tickets(),
+         report_agent_noncirculated_data.total_values_lottery_tickets('transfer')),
+
+        ("R46", agent_noncirculated_asserts.check_row(), 'ДА'),
+        ("R48", report_agent_noncirculated_data.reward_under_table(), agent_noncirculated_asserts.reward_tickets()),
+        ("R50", report_agent_noncirculated_data.transfer_under_table_to_principal(), agent_noncirculated_asserts.transfer_tickets()),
+        ("R52", report_agent_noncirculated_data.transfer_under_table_to_agent(), agent_noncirculated_asserts.transfer_tickets())
     ]
     return array

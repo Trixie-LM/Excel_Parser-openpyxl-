@@ -26,7 +26,7 @@ class CreatingFinalReport:
                 self.sheet.cell(row=cell.row + 2, column=cell.column + 20).value = cell.value
 
     # Редактирование клеток в файле
-    def table_editing(self):
+    def tables_editing(self):
         print('Соединяем ячейки и устанавливаем стиль...')
         for cell in common_core.editing_cells():
             double = Side(border_style="double", color="FF000000")
@@ -60,12 +60,13 @@ class CreatingFinalReport:
                 self.sheet[cellNumber].fill = PatternFill('solid', fgColor="00FF00")
             else:
                 self.sheet[cellNumber].fill = PatternFill('solid', fgColor="FF0000")
+
         timer.tick('Проверка значений заняла')
         self.book.save(self.file_path)
 
     def calling_all_methods(self):
         self.preconditions()
-        self.table_editing()
+        self.tables_editing()
         self.import_data()
         self.get_column_wider()
         self.check_and_paint()
