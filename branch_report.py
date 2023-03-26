@@ -99,9 +99,9 @@ class ReportBranchData(CommonFunctions):
         paid_number = self._get_cell_value('L', result_row)
         paid_amount = self._get_cell_value('M', result_row)
         # Вознаграждения
-        reward = self._get_cell_value('P', result_row)
+        reward = round(float(self._get_cell_value('P', result_row)), 2)
         # Перечисление принципалу
-        transfer = self._get_cell_value('Q', result_row)
+        transfer = round(float(self._get_cell_value('Q', result_row)), 2)
 
         if column == 'sold_number':
             return sold_number
@@ -126,9 +126,9 @@ class ReportBranchData(CommonFunctions):
         paid_number = self._get_cell_value('H', result_row)
         paid_amount = self._get_cell_value('J', result_row)
         # Вознаграждения
-        reward = self._get_cell_value('N', result_row)
+        reward = round(float(self._get_cell_value('N', result_row)), 2)
         # Перечисление принципалу
-        transfer = self._get_cell_value('P', result_row)
+        transfer = round(float(self._get_cell_value('P', result_row)), 2)
 
         if column == 'sold_number':
             return sold_number
@@ -181,7 +181,7 @@ class BranchAsserts(CommonFunctions):
                 total += int(cell)
 
         if data_type == 'float':
-            return round(total, 1)
+            return round(total, 2)
         else:
             return total
 
@@ -193,7 +193,7 @@ class BranchAsserts(CommonFunctions):
         return self.counting_values_in_column('realization_tickets', 9)
 
     def paid_number_tickets(self):
-        return self.counting_values_in_column('realization_tickets', 11)
+        return self.counting_values_in_column('realization_tickets', 12)
 
     def paid_amount_tickets(self):
         return self.counting_values_in_column('realization_tickets', 13)

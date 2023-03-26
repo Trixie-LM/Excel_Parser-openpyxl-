@@ -64,6 +64,17 @@ class PreCondition:
 def paid_lottery_names_list():
     return list(add_sheet.rows)
 
+
+def finalInfo(value):
+
+    info = {
+        "length": int(len(paid_lottery_names_list())),
+        "number": float(add_sheet["C" + str(add_sheet.max_row)].value),
+        "amount": float(add_sheet["D" + str(add_sheet.max_row)].value.replace(" ", ""))
+    }
+
+    return info[value]
+
 #TODO: добавить в отчет для проверки
 
 # Поиск расхождение между реестром и отчетом по выплатам

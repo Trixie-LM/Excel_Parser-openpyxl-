@@ -1,11 +1,21 @@
 from openpyxl import load_workbook
 from numpy import unique
+from util import _get_cell_value
 
 file = 'C:/Users/Trixie_LM/Desktop/1C/Выплаченные выигрыши.xlsx'
 
 book = load_workbook(filename=file, data_only=True)
 sheet = book.active
 
+
+class CommonFunctions:
+    def __init__(self):
+        self.file_path = 'C:/Users/Trixie_LM/Desktop/1C/Выплаченные выигрыши.xlsx'
+        self.book = load_workbook(filename=self.file_path, data_only=True)
+        self.sheet = self.book.active
+
+    def _get_cell_value(self, column_letter, idx):
+        return _get_cell_value(column_letter, idx, self.sheet)
 
 class ReportPaymentsData:
 
@@ -167,3 +177,41 @@ class PaymentsAsserts:
 
         return arrayNumbers
 
+
+class PaymentListTicketsInArray(CommonFunctions):
+    def search_tickets(self, *ticket_type, is_instant=False):
+        tickets = []
+        bingo_lottery_codes = ["102021", "102041", "102051", "102091"]
+
+        for i in range(2, self.sheet.max_row):
+            product_code = sheet['I' + str(i)].value[0:6]
+            report_ticket_type = sheet['J' + str(i)].value
+            ticket_number = self._get_cell_value('I', i)
+
+            # Список моментальных и тиражных билетов
+            if report_ticket_type in ['Бумажный', 'Открытка'] and report_ticket_type in ticket_type :
+
+                #TODO: не нравятся условия, должен быть другой вариант
+                if product_code not in bingo_lottery_codes and is_instant == True:
+                    tickets.append(ticket_number)
+                elif product_code in bingo_lottery_codes and is_instant != True:
+                    tickets.append(ticket_number)
+
+            # Список электронных билетов
+            elif report_ticket_type in ticket_type:
+                tickets.append(ticket_number)
+
+        return tickets
+
+
+    def digital_tickets(self):
+        digitals = self.search_tickets('Электронный', 'Купон')
+        return digitals
+
+    def draw_tickets(self):
+        draw_tickets = self.search_tickets('Бумажный', 'Открытка')
+        return draw_tickets
+
+    def instant_tickets(self):
+        instants = self.search_tickets('Бумажный', is_instant=True)
+        return instants

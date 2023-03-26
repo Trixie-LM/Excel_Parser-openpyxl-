@@ -23,7 +23,7 @@ class CreatingFinalReport:
         for row in paid_lottery_names_list():
             reversed_row = reversed(row)
             for cell in reversed_row:
-                self.sheet.cell(row=cell.row + 2, column=cell.column + 20).value = cell.value
+                self.sheet.cell(row=cell.row + 3, column=cell.column + 20).value = cell.value
 
     # Редактирование клеток в файле
     def tables_editing(self):
@@ -64,12 +64,17 @@ class CreatingFinalReport:
         timer.tick('Проверка значений заняла')
         self.book.save(self.file_path)
 
+    def postconditions(self):
+        common_core.postconditions()
+        print('postcondition')
+
     def calling_all_methods(self):
         self.preconditions()
         self.tables_editing()
         self.import_data()
         self.get_column_wider()
         self.check_and_paint()
+        self.postconditions()
 
 
 if __name__ == '__main__':

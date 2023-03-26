@@ -153,3 +153,42 @@ class SalesAsserts(SalesDataBase):
             return "Все билеты набора находятся в отчете"
         else:
             return "Нужно проверить открытки"
+
+
+class SaleListTicketsInArray(SalesDataBase):
+    def search_tickets(self, *ticket_type, is_instant=False):
+        tickets = []
+        bingo_lottery_codes = ["102021", "102041", "102051", "102091"]
+
+        for i in range(2, self.sheet.max_row):
+            product_code = self._get_cell_value('J', i)[0:6]
+            ticket_number = self._get_cell_value('J', i)
+            report_ticket_type = self._get_cell_value('K', i)
+
+            # Список моментальных и тиражных билетов
+            if report_ticket_type in ['Бумажный', 'Открытка'] and report_ticket_type in ticket_type :
+
+                #TODO: не нравятся условия, должен быть другой вариант
+                if product_code not in bingo_lottery_codes and is_instant == True:
+                    tickets.append(ticket_number)
+                elif product_code in bingo_lottery_codes and is_instant != True:
+                    tickets.append(ticket_number)
+
+            # Список электронных билетов
+            elif report_ticket_type in ticket_type:
+                tickets.append(ticket_number)
+
+        return tickets
+
+
+    def digital_tickets(self):
+        digitals = self.search_tickets('Электронный', 'Купон')
+        return digitals
+
+    def draw_tickets(self):
+        draw_tickets = self.search_tickets('Бумажный', 'Открытка')
+        return draw_tickets
+
+    def instant_tickets(self):
+        instants = self.search_tickets('Бумажный', is_instant=True)
+        return instants

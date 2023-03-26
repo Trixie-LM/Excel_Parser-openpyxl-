@@ -1,14 +1,16 @@
-from sales_report import ReportSalesData, SalesAsserts
+from sales_report import ReportSalesData, SalesAsserts, ListTicketsInArray
 from payment_report import ReportPaymentsData, PaymentsAsserts
 from branch_report import ReportBranchData, BranchAsserts
 from agent_report import ReportAgentData, AgentAsserts
 from agent_report_about_noncirculated_tickets import ReportAgentNoncirculatedData, AgentNoncirculatedAsserts
+import paid_payments_registry
 import report_of_checking
 
 
 # Классы отчета продаж
 report_sales_data = ReportSalesData()
 sales_asserts = SalesAsserts()
+array_list = ListTicketsInArray()
 # Классы отчета выплат
 report_payments_data = ReportPaymentsData()
 payments_asserts = PaymentsAsserts()
@@ -51,8 +53,7 @@ def editing_cells():
         "R12:S12", "R13:S13", "R14:S14", "R15:S15",
 
         # Реестр выплаченных выигрышей
-        "U2:X2",
-        "U3:V3", "W3:W3", "X3:X3",
+        "U2:X3",
         "U4:V4", "W4:W4", "X4:X4",
         "U5:V5", "W5:W5", "X5:X5",
         "U6:V6", "W6:W6", "X6:X6",
@@ -64,6 +65,8 @@ def editing_cells():
         "U12:V12", "W12:W12", "X12:X12",
         "U13:V13", "W13:W13", "X13:X13",
         "U14:V14", "W14:W14", "X14:X14",
+        "U15:V15", "W15:W15", "X15:X15",
+        "U16:V16", "W16:W16", "X16:X16",
 
         # Отчет филиала
         "B28:G28", "B29:D29", "E29:G29", "B30:D31", "E30:G31",
@@ -117,20 +120,20 @@ def startCell(number):
 def input_data():
     array = [
         # Отчет по продажам
-        ("B2", "Отчет по продажам"),
+        ("B2", "Отчет по продажам\n(Строится по данным платформы)"),
         ("B4", "Итоговое количество проданных билетов в отчете"),
         ("F4", f"{report_sales_data.total_quantity_tickets_in_report()} шт"),
         ("F5", f"{report_sales_data.tickets_price_in_report()} руб"),
-        ("B6", "Электронные билеты"),
+        ("B6", "Электронные билеты\n(Электронные + Купоны)"),
         ("F6", f"{sales_asserts.counting_tickets('Электронный')[0]} шт"),
         ("F7", f"{sales_asserts.counting_tickets('Электронный')[1]} руб"),
-        ("B8", "Бумажные билеты"),
+        ("B8", "Бумажные билеты\n(Бинго билеты 'В' и 'ВНЕ' набора + МЛ)"),
         ("F8", f"{sales_asserts.counting_tickets('Бумажный')[0]} шт"),
         ("F9", f"{sales_asserts.counting_tickets('Бумажный')[1]} руб"),
         ("B10", "Наборы/Открытки"),
         ("F10", f"{sales_asserts.counting_tickets('Открытка')[0]} шт"),
         ("F11", f"{sales_asserts.counting_tickets('Открытка')[1]} руб"),
-        ("B12", "Тиражные билеты"),
+        ("B12", "Тиражные билеты\n(Бинго билеты 'В' и 'ВНЕ' набора)"),
         ("F12", f"{sales_asserts.counting_tickets('Бумажный', 'Тиражная')[0]} шт"),
         ("F13", f"{sales_asserts.counting_tickets('Бумажный', 'Тиражная')[1]} руб"),
         ("B14", "Билеты моментальной лотереи"),
@@ -159,20 +162,20 @@ def input_data():
         ("H15", f"{report_of_checking.amount_of_instant_sales()} руб"),
 
         # Отчет по выплатам
-        ("L2", "Отчет по выплатам"),
+        ("L2", "Отчет по выплатам\n(Строится по данным платформы)"),
         ("L4", "Итоговое количество выплаченных билетов в отчете"),
         ("P4", f"{report_payments_data.total_quantity_tickets_in_report()} шт"),
         ("P5", f"{report_payments_data.win_amount_in_report()} руб"),
-        ("L6", "Электронные билеты"),
+        ("L6", "Электронные билеты\n(Электронные + Купоны)"),
         ("P6", f"{payments_asserts.counting_tickets('Электронный')[0]} шт"),
         ("P7", f"{payments_asserts.counting_tickets('Электронный')[1]} руб"),
-        ("L8", "Бумажные билеты"),
+        ("L8", "Бумажные билеты\n(Бинго билеты 'В' и 'ВНЕ' набора + МЛ)"),
         ("P8", f"{payments_asserts.counting_tickets('Бумажный')[0]} шт"),
         ("P9", f"{payments_asserts.counting_tickets('Бумажный')[1]} руб"),
         ("L10", "Наборы/Открытки"),
         ("P10", f"{payments_asserts.counting_tickets('Открытка')[0]} шт"),
         ("P11", f"{payments_asserts.counting_tickets('Открытка')[1]} руб"),
-        ("L12", "Тиражные билеты"),
+        ("L12", "Тиражные билеты\n(Бинго билеты 'В' и 'ВНЕ' набора)"),
         ("P12", f"{payments_asserts.counting_tickets('Бумажный', 'Тиражная')[0]} шт"),
         ("P13", f"{payments_asserts.counting_tickets('Бумажный', 'Тиражная')[1]} руб"),
         ("L14", "Билеты моментальной лотереи"),
@@ -201,7 +204,7 @@ def input_data():
         ("R15", f'{report_of_checking.amount_of_instant_payments()} руб'),
 
         # Реестр выплаченных выигрышей
-        ("U2", "Реестр выплаченных выигрышей"),
+        ("U2", "Реестр выплаченных выигрышей\n(Строится по данным платформы)"),
 
         # Отчет филиала
         ("B28", "Отчет филиала"),
@@ -374,6 +377,12 @@ def check_and_painting():
 
         ("L23", payments_asserts.unique_ticket_numbers(), 'Все билеты в отчете уникальные'),
         ("L24", payments_asserts.win_amount_less_15000(), 'Отсутствуют билеты с выигрышем более 15000 руб'),
+
+        # Реестр выплаченных выигрышей
+        ("W" + str(3+paid_payments_registry.finalInfo("length")), paid_payments_registry.finalInfo("number"),
+         report_payments_data.total_quantity_tickets_in_report()),
+        ("X" + str(3+paid_payments_registry.finalInfo("length")), paid_payments_registry.finalInfo("amount"),
+         report_payments_data.win_amount_in_report()),
 
         # Отчет филиала
         ("B41", report_branch_data.sold_number_tickets(), branch_asserts.total_values_lottery_tickets('sold_number')),

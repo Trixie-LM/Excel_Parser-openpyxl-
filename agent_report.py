@@ -109,9 +109,9 @@ class ReportAgentData(CommonFunctions):
         paid_number = self._get_cell_value('K', result_row)
         paid_amount = self._get_cell_value('L', result_row)
         # Вознаграждения
-        reward = self._get_cell_value('N', result_row)
+        reward = round(float(self._get_cell_value('N', result_row)), 2)
         # Перечисление принципалу
-        transfer = self._get_cell_value('O', result_row)
+        transfer = round(float(self._get_cell_value('O', result_row)), 2)
 
         if column == 'sold_number':
             return sold_number
@@ -136,9 +136,9 @@ class ReportAgentData(CommonFunctions):
         paid_number = self._get_cell_value('H', result_row)
         paid_amount = self._get_cell_value('J', result_row)
         # Вознаграждения
-        reward = self._get_cell_value('N', result_row)
+        reward = round(float(self._get_cell_value('N', result_row)), 2)
         # Перечисление принципалу
-        transfer = self._get_cell_value('O', result_row)
+        transfer = round(float(self._get_cell_value('O', result_row)), 2)
 
         if column == 'sold_number':
             return sold_number
@@ -202,7 +202,7 @@ class AgentAsserts(CommonFunctions):
                 total += int(cell)
 
         if data_type == 'float':
-            return round(total, 1)
+            return round(total, 2)
         else:
             return total
 
