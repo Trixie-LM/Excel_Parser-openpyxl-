@@ -1,5 +1,7 @@
 from openpyxl.styles import Border, Side, PatternFill, Font, Alignment
 from paid_payments_registry import PreCondition, paid_lottery_names_list
+import open_URL_in_one_click
+import discrepancies_in_reports
 from openpyxl import Workbook
 from util import Timer
 import common_core
@@ -65,8 +67,7 @@ class CreatingFinalReport:
         self.book.save(self.file_path)
 
     def postconditions(self):
-        common_core.postconditions()
-        print('postcondition')
+        discrepancies_in_reports.postconditions()
 
     def calling_all_methods(self):
         self.preconditions()
@@ -78,5 +79,10 @@ class CreatingFinalReport:
 
 
 if __name__ == '__main__':
-    CreatingFinalReport().calling_all_methods()
-    print(f"\nОтчет готов!\nОбщее время работы программы: {timer.info}")
+    qqq = input('Укажите файл: ')
+    if len(qqq) >= 1:
+        open_URL_in_one_click.url_in_one_click(qqq)
+    else:
+        CreatingFinalReport().calling_all_methods()
+        print(f"\nОтчет готов!\nОбщее время работы программы: {timer.info}")
+

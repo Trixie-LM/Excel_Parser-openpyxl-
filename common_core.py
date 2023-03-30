@@ -1,4 +1,4 @@
-from sales_report import ReportSalesData, SalesAsserts, ListTicketsInArray
+from sales_report import ReportSalesData, SalesAsserts
 from payment_report import ReportPaymentsData, PaymentsAsserts
 from branch_report import ReportBranchData, BranchAsserts
 from agent_report import ReportAgentData, AgentAsserts
@@ -10,7 +10,6 @@ import report_of_checking
 # Классы отчета продаж
 report_sales_data = ReportSalesData()
 sales_asserts = SalesAsserts()
-array_list = ListTicketsInArray()
 # Классы отчета выплат
 report_payments_data = ReportPaymentsData()
 payments_asserts = PaymentsAsserts()

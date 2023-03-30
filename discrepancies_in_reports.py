@@ -3,9 +3,8 @@ from payment_report import ReportPaymentsData, PaymentsAsserts, PaymentListTicke
 from branch_report import ReportBranchData, BranchAsserts
 from agent_report import ReportAgentData, AgentAsserts
 from agent_report_about_noncirculated_tickets import ReportAgentNoncirculatedData, AgentNoncirculatedAsserts
-import paid_payments_registry
 import report_of_checking
-
+import os
 
 # Классы отчета продаж
 report_sales_data = ReportSalesData()
@@ -25,9 +24,13 @@ agent_asserts = AgentAsserts()
 report_agent_noncirculated_data = ReportAgentNoncirculatedData()
 agent_noncirculated_asserts = AgentNoncirculatedAsserts()
 
+name_folder = "Расхождения в отчетах"
+if not os.path.isdir(name_folder):
+     os.mkdir(name_folder)
+
 
 def create_file(name, array):
-    file = open(name+' [РАСХОЖДЕНИЯ].txt', 'w', encoding='utf-8')
+    file = open(name_folder + '/' + name + ' [РАСХОЖДЕНИЯ].txt', 'w', encoding='utf-8')
     site = 'http://10.240.240.99/Lotteries_Trade11_Piganov/hs/Tickets/Status/Ticket/'
 
     for num in array:

@@ -8,3 +8,5 @@ def url_in_one_click(fileName):
         os.system('start ' + site)
 
     file.close()
+
+    
