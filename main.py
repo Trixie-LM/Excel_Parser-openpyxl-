@@ -1,17 +1,20 @@
 from openpyxl.styles import Border, Side, PatternFill, Font, Alignment
-from paid_payments_registry import PreCondition, paid_lottery_names_list
+from paid_payments_registry import PreCondition, ReportPaidPaymentRegistry
 import open_URL_in_one_click
 import discrepancies_in_reports
+import files_path
 from openpyxl import Workbook
 from util import Timer
 import common_core
 
 timer = Timer()
 
+report_p_p_registry = ReportPaidPaymentRegistry()
+PreCondition = PreCondition()
 
 class CreatingFinalReport:
     def __init__(self):
-        self.file_path = 'C:/Users/Trixie_LM/Desktop/1C/Итоговый отчет.xlsx'
+        self.file_path = files_path.total_report
         self.book = Workbook()
         self.sheet = self.book.active
         self.sheet.title = "Итоговый отчет"
@@ -22,7 +25,7 @@ class CreatingFinalReport:
         PreCondition.delete_rows()
 
         # Копирование таблицы "реестр выплаченных выигрышей" в основной файл
-        for row in paid_lottery_names_list():
+        for row in report_p_p_registry.paid_lottery_names_list():
             reversed_row = reversed(row)
             for cell in reversed_row:
                 self.sheet.cell(row=cell.row + 3, column=cell.column + 20).value = cell.value

@@ -1,11 +1,12 @@
 from openpyxl import load_workbook
 from numpy import unique
 from util import _get_cell_value
+import files_path
 
 
 class SalesDataBase:
     def __init__(self):
-        self.file_path = 'C:/Users/Trixie_LM/Desktop/1C/Проданные билеты.xlsx'
+        self.file_path = files_path.sales_report
         self.book = load_workbook(filename=self.file_path, data_only=True)
         self.sheet = self.book.active
 

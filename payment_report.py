@@ -1,44 +1,38 @@
 from openpyxl import load_workbook
 from numpy import unique
 from util import _get_cell_value
-
-file = 'C:/Users/Trixie_LM/Desktop/1C/Выплаченные выигрыши.xlsx'
-
-book = load_workbook(filename=file, data_only=True)
-sheet = book.active
+import files_path
 
 
 class CommonFunctions:
     def __init__(self):
-        self.file_path = 'C:/Users/Trixie_LM/Desktop/1C/Выплаченные выигрыши.xlsx'
+        self.file_path = files_path.payment_report
         self.book = load_workbook(filename=self.file_path, data_only=True)
         self.sheet = self.book.active
 
     def _get_cell_value(self, column_letter, idx):
         return _get_cell_value(column_letter, idx, self.sheet)
 
-class ReportPaymentsData:
 
-    @staticmethod
-    def total_quantity_tickets_in_report():
-        return sheet['M' + str(sheet.max_row)].value
+class ReportPaymentsData(CommonFunctions):
 
-    @staticmethod
-    def win_amount_in_report():
-        return sheet['N' + str(sheet.max_row)].value
+    def total_quantity_tickets_in_report(self):
+        return self.sheet['M' + str(self.sheet.max_row)].value
 
-    @staticmethod
-    def check_cells_in_row():
+    def win_amount_in_report(self):
+        return self.sheet['N' + str(self.sheet.max_row)].value
+
+    def check_cells_in_row(self):
         passedAssertions = 0
         bingoLottery = ["102021", "102041", "102051", "102091"]
 
-        for i in range(2, sheet.max_row):
-            setCell = sheet['K' + str(i)].value
-            drawCell = sheet['H' + str(i)].value
-            ticketType = sheet['J' + str(i)].value
-            seventhDigit = sheet['I' + str(i)].value[6:7]
-            productCode = sheet['I' + str(i)].value[0:6]
-            paymentType = sheet['L' + str(i)].value
+        for i in range(2, self.sheet.max_row):
+            setCell = self.sheet['K' + str(i)].value
+            drawCell = self.sheet['H' + str(i)].value
+            ticketType = self.sheet['J' + str(i)].value
+            seventhDigit = self.sheet['I' + str(i)].value[6:7]
+            productCode = self.sheet['I' + str(i)].value[0:6]
+            paymentType = self.sheet['L' + str(i)].value
 
             try:
                 if productCode in bingoLottery and seventhDigit == "3" and len(drawCell) == 6 and setCell is not None:
@@ -60,7 +54,7 @@ class ReportPaymentsData:
 
                 else:
                     print(
-                        f'Ошибка! Отчет выплат. Строка - {str(i)}\n{sheet["I" + str(i)].value}-{len(drawCell)}{setCell}')
+                        f'Ошибка! Отчет выплат. Строка - {str(i)}\n{self.sheet["I" + str(i)].value}-{len(drawCell)}{setCell}')
 
             except AssertionError:
                 print('Ошибка! Отчет выплат. Строка - ' + str(i))
@@ -68,32 +62,29 @@ class ReportPaymentsData:
         return passedAssertions
 
 
-class PaymentsAsserts:
+class PaymentsAsserts(CommonFunctions):
 
-    @staticmethod
-    def total_quantity():
+    def total_quantity(self):
         tickets_amount = 0
-        for i in range(2, sheet.max_row):
-            tickets_amount += sheet['M' + str(i)].value
+        for i in range(2, self.sheet.max_row):
+            tickets_amount += self.sheet['M' + str(i)].value
         return tickets_amount
 
-    @staticmethod
-    def win_amount():
+    def win_amount(self):
         win_amount = 0
-        for i in range(2, sheet.max_row):
-            win_amount += sheet['N' + str(i)].value
+        for i in range(2, self.sheet.max_row):
+            win_amount += self.sheet['N' + str(i)].value
         return win_amount
 
-    @staticmethod
-    def counting_tickets(type_of_tickets, type_of_lottery=True):
+    def counting_tickets(self, type_of_tickets, type_of_lottery=True):
         ticketsQuantity = 0
         winAmount = 0
         bingoLottery = ["102021", "102041", "102051", "102091"]
 
-        for i in range(2, sheet.max_row):
-            productCode = sheet['I' + str(i)].value[0:6]
-            ticketType = sheet['J' + str(i)].value
-            winAmountCell = sheet['N' + str(i)].value
+        for i in range(2, self.sheet.max_row):
+            productCode = self.sheet['I' + str(i)].value[0:6]
+            ticketType = self.sheet['J' + str(i)].value
+            winAmountCell = self.sheet['N' + str(i)].value
 
             # Подсчет электронных билетов и купонов
             if type_of_tickets == 'Электронный':
@@ -135,12 +126,11 @@ class PaymentsAsserts:
 
         return ticketsQuantity, winAmounts
 
-    @staticmethod
-    def unique_ticket_numbers():
+    def unique_ticket_numbers(self):
         ticketNumbersQuantity = 0
         ticketNumbers = []
-        for i in range(2, sheet.max_row):
-            ticketNumber = sheet['I' + str(i)].value
+        for i in range(2, self.sheet.max_row):
+            ticketNumber = self.sheet['I' + str(i)].value
             if ticketNumber is not None:
                 ticketNumbers.append(ticketNumber)
                 ticketNumbersQuantity += 1
@@ -150,12 +140,11 @@ class PaymentsAsserts:
         else:
             return "В отчете есть дубликат билета"
 
-    @staticmethod
-    def win_amount_less_15000():
+    def win_amount_less_15000(self):
         winAmountMore15000 = 0
 
-        for i in range(2, sheet.max_row):
-            ticketSetNumber = sheet['N' + str(i)].value
+        for i in range(2, self.sheet.max_row):
+            ticketSetNumber = self.sheet['N' + str(i)].value
             if ticketSetNumber >= 15000:
                 winAmountMore15000 += 1
 
@@ -165,13 +154,12 @@ class PaymentsAsserts:
             return "В отчете есть билеты с выигрышем более 15000 руб"
 
     # Необходим для paid_payments_registry
-    @staticmethod
-    def collecting_numbers():
+    def collecting_numbers(self):
         arrayNumbers = {}
 
-        for i in range(2, sheet.max_row):
-            ticketNumber = sheet['I' + str(i)].value
-            winAmount = int(sheet['N' + str(i)].value)
+        for i in range(2, self.sheet.max_row):
+            ticketNumber = self.sheet['I' + str(i)].value
+            winAmount = int(self.sheet['N' + str(i)].value)
 
             arrayNumbers[ticketNumber] = winAmount
 
@@ -184,8 +172,8 @@ class PaymentListTicketsInArray(CommonFunctions):
         bingo_lottery_codes = ["102021", "102041", "102051", "102091"]
 
         for i in range(2, self.sheet.max_row):
-            product_code = sheet['I' + str(i)].value[0:6]
-            report_ticket_type = sheet['J' + str(i)].value
+            product_code = self.sheet['I' + str(i)].value[0:6]
+            report_ticket_type = self.sheet['J' + str(i)].value
             ticket_number = self._get_cell_value('I', i)
 
             # Список моментальных и тиражных билетов

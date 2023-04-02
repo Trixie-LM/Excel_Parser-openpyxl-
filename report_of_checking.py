@@ -1,6 +1,7 @@
 from openpyxl import load_workbook
+import files_path
 
-document = 'C:/Users/Trixie_LM/Desktop/1C/Отчет для сверки.xlsm'
+document = files_path.report_of_checking
 
 book = load_workbook(filename=document, data_only=True)
 sheet = book.active

@@ -1,10 +1,11 @@
 from openpyxl import load_workbook
 from util import _get_cell_value, get_boundary_values
+import files_path
 
 
 class CommonFunctions:
     def __init__(self):
-        self.file_path = 'C:/Users/Trixie_LM/Desktop/1C/Отчет агента.xlsx'
+        self.file_path = files_path.agent_report
         self.book = load_workbook(filename=self.file_path, data_only=True)
         self.sheet = self.book.active
 

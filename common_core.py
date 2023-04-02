@@ -3,7 +3,7 @@ from payment_report import ReportPaymentsData, PaymentsAsserts
 from branch_report import ReportBranchData, BranchAsserts
 from agent_report import ReportAgentData, AgentAsserts
 from agent_report_about_noncirculated_tickets import ReportAgentNoncirculatedData, AgentNoncirculatedAsserts
-import paid_payments_registry
+from paid_payments_registry import ReportPaidPaymentRegistry
 import report_of_checking
 
 
@@ -22,6 +22,8 @@ agent_asserts = AgentAsserts()
 # Классы отчета агента о бестиражных билетах
 report_agent_noncirculated_data = ReportAgentNoncirculatedData()
 agent_noncirculated_asserts = AgentNoncirculatedAsserts()
+# Классы отчета агента
+report_p_p_registry = ReportPaidPaymentRegistry()
 
 def editing_cells():
     array = [
@@ -184,7 +186,7 @@ def input_data():
         ("L17", "Сложение билетов по столбцу \"Кол-во\""), ("P17", f"{payments_asserts.total_quantity()} шт"),
         ("L18", "Проверка точности атрибутов для билета"),
         ("P18", f"{report_payments_data.check_cells_in_row()} шт"),
-        ("L19", "Сложение по столбцу \n\"Размер выигрыша\""), ("P19", f"{PaymentsAsserts.win_amount()} руб"),
+        ("L19", "Сложение по столбцу \n\"Размер выигрыша\""), ("P19", f"{payments_asserts.win_amount()} руб"),
         ("L21", f"Общая сумма ячеек \"Электронные билеты\", \"Бумажные билеты\" и \"Открытки\""),
         ("P21", f"{payments_asserts.all_ticket_types()[0]} шт"),
         ("P22", f"{payments_asserts.all_ticket_types()[1]} руб"),
@@ -378,9 +380,9 @@ def check_and_painting():
         ("L24", payments_asserts.win_amount_less_15000(), 'Отсутствуют билеты с выигрышем более 15000 руб'),
 
         # Реестр выплаченных выигрышей
-        ("W" + str(3+paid_payments_registry.finalInfo("length")), paid_payments_registry.finalInfo("number"),
+        ("W" + str(3+report_p_p_registry.finalInfo("length")), report_p_p_registry.finalInfo("number"),
          report_payments_data.total_quantity_tickets_in_report()),
-        ("X" + str(3+paid_payments_registry.finalInfo("length")), paid_payments_registry.finalInfo("amount"),
+        ("X" + str(3+report_p_p_registry.finalInfo("length")), report_p_p_registry.finalInfo("amount"),
          report_payments_data.win_amount_in_report()),
 
         # Отчет филиала
