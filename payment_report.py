@@ -5,10 +5,12 @@ import files_path
 
 
 class CommonFunctions:
+
     def __init__(self):
         self.file_path = files_path.payment_report
         self.book = load_workbook(filename=self.file_path, data_only=True)
         self.sheet = self.book.active
+
 
     def _get_cell_value(self, column_letter, idx):
         return _get_cell_value(column_letter, idx, self.sheet)

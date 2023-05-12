@@ -1,14 +1,17 @@
 from openpyxl.styles import Border, Side, PatternFill, Font, Alignment
 from paid_payments_registry import PreCondition, ReportPaidPaymentRegistry
-import open_URL_in_one_click
 import discrepancies_in_reports
 import files_path
 from openpyxl import Workbook
 from util import Timer
 import common_core
 
+
+
+# Вычесление время вызова приложения
 timer = Timer()
 
+# Переменные классов
 report_p_p_registry = ReportPaidPaymentRegistry()
 PreCondition = PreCondition()
 
@@ -79,13 +82,3 @@ class CreatingFinalReport:
         self.get_column_wider()
         self.check_and_paint()
         self.postconditions()
-
-
-if __name__ == '__main__':
-    qqq = input('Укажите файл: ')
-    if len(qqq) >= 1:
-        open_URL_in_one_click.url_in_one_click(qqq)
-    else:
-        CreatingFinalReport().calling_all_methods()
-        print(f"\nОтчет готов!\nОбщее время работы программы: {timer.info}")
-

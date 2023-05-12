@@ -14,44 +14,41 @@ class CommonFunctions:
 
 
 class WorkSheet(CommonFunctions):
-    def realization_of_lottery_tickets(self):
+       def table_range(self):
         # задаем начальное и конечное значение для поиска диапазона
         start_value_row = 'Наименование лотереи'
         end_value_row = 'ИТОГО:'
         end_value_column = 'Остаток на конец  отчетного периода'
+        table_range = [start_value_row, end_value_column, end_value_row]
 
-        # координаты начала и конца диапазона
-        start_row, start_column, end_row, end_column = None, None, None, None
+        # Функция iter_rows() возвращает все строки из файла
+        rows = self.sheet.iter_rows()
+        # Переменная `cells` содержит генератор, который является последовательностью всех ячеек в листе таблицы
+        cells = (cell for row in rows for cell in row)
+        # Поиск стартовой точки, последней колонки и строки
+        ranges_in_array = (cell for cell in cells if cell.value in table_range)
 
-        # проходим по всем ячейкам листа
-        for row in self.sheet.iter_rows():
-            for cell in row:
-                # если найдено начальное значение, запоминаем его координаты
-                if cell.value == start_value_row:
-                    start_row, start_column = cell.row + 4, cell.column
-                # если найдено конечное значение, запоминаем его координаты
-                elif cell.value == end_value_row:
-                    end_row = cell.row
-                # если найдено конечное значение, запоминаем его координаты
-                elif cell.value == end_value_column:
-                    end_column = cell.column
-            if start_row and end_row and end_column:
-                break
+        # Диапазон первой таблицы
+        start_position = next(ranges_in_array)
+        last_column, last_row = next(ranges_in_array), next(ranges_in_array)
 
-        # проверяем, что начальное и конечное значение найдены
-        if start_row is not None and end_row is not None:
-            # определяем диапазон
-            range = self.sheet.cell(row=start_row, column=start_column).coordinate + ':' + self.sheet.cell(row=end_row,
-                                                                                                           column=end_column).coordinate
-            # выводим найденный диапазон
-            return range
-        else:
-            print('Диапазон не найден')
+        coordinate = {
+            'start_row': start_position.row + 4,
+            'start_column': start_position.column,
+            'last_column': last_column.column,
+            'last_row': last_row.row
+        }
+
+        start_coordinate = self.sheet.cell(row=coordinate["start_row"], column=coordinate["start_column"]).coordinate
+        end_coordinate = self.sheet.cell(row=coordinate["last_row"], column=coordinate["last_column"]).coordinate
+        table_range = start_coordinate + ':' + end_coordinate
+
+        return table_range
 
 
 # Объекты класса WorkSheet
-tickets_table_range = WorkSheet().realization_of_lottery_tickets()
-
+workSheet = WorkSheet()
+tickets_table_range = workSheet.table_range()
 
 class ReportAgentNoncirculatedData(CommonFunctions):
     # Беру данные из "ИТОГО" в таблице "Реализация лотерейных билетов"
@@ -108,21 +105,13 @@ class AgentNoncirculatedAsserts(CommonFunctions):
     # Функция для подсчета итоговых данных
     # в таблице "Реализация лотерейных билетов"
     def counting_values_in_column(self, column, data_type='int'):
-        total = 0
         min_row = int(get_boundary_values(tickets_table_range, 'min_row'))
         max_row = int(get_boundary_values(tickets_table_range, 'max_row'))
 
-        for row in range(min_row, max_row):
-            cell = self.sheet.cell(row=row, column=column).value
-            if data_type == 'float':
-                total += float(cell)
-            else:
-                total += int(cell)
+        values = [self.sheet.cell(row=row, column=column).value for row in range(min_row, max_row)]
+        total = sum(float(v) if data_type == 'float' else int(v) for v in values)
 
-        if data_type == 'float':
-            return round(total, 1)
-        else:
-            return total
+        return round(total, 2) if data_type == 'float' else total
 
     # "Реализация лотерейных билетов"
     def sold_number_tickets(self):

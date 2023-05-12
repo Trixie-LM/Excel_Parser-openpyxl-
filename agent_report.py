@@ -14,170 +14,128 @@ class CommonFunctions:
 
 
 class WorkSheet(CommonFunctions):
-    def realization_of_lottery_tickets(self):
+    def table_range(self, table):
+        """Возвращает диапазон выбранной таблицы
+
+        :param table: 'tickets' или 'receipts'
+        :return: string
+        """
         # задаем начальное и конечное значение для поиска диапазона
         start_value_row = 'Наименование филиала'
         end_value_row = 'ИТОГО:'
         end_value_column = 'Подлежит перечислению Принципалу за отчетный период'
+        table_range = [start_value_row, end_value_column, end_value_row]
 
-        # координаты начала и конца диапазона
-        start_row, start_column, end_row, end_column = None, None, None, None
+        # Функция iter_rows() возвращает все строки из файла
+        rows = self.sheet.iter_rows()
+        # Переменная `cells` содержит генератор, который является последовательностью всех ячеек в листе таблицы
+        cells = (cell for row in rows for cell in row)
+        # Поиск стартовой точки, последней колонки и строки
+        ranges_in_array = (cell for cell in cells if cell.value in table_range)
 
-        # проходим по всем ячейкам листа
-        for row in self.sheet.iter_rows():
-            for cell in row:
-                # если найдено начальное значение, запоминаем его координаты
-                if cell.value == start_value_row:
-                    start_row, start_column = cell.row + 4, cell.column
-                # если найдено конечное значение, запоминаем его координаты
-                elif cell.value == end_value_row:
-                    end_row = cell.row
-                # если найдено конечное значение, запоминаем его координаты
-                elif cell.value == end_value_column:
-                    end_column = cell.column
-            if start_row and end_row and end_column:
-                break
+        # Диапазон первой таблицы
+        start_position = next(ranges_in_array)
+        last_column, last_row = next(ranges_in_array), next(ranges_in_array)
+        # Диапазон второй таблицы
+        start_position_st = next(ranges_in_array)
+        last_column_st, last_row_st = next(ranges_in_array), next(ranges_in_array)
 
-        # проверяем, что начальное и конечное значение найдены
-        if start_row is not None and end_row is not None:
-            # определяем диапазон
-            range = self.sheet.cell(row=start_row, column=start_column).coordinate + ':' + self.sheet.cell(row=end_row,
-                                                                                                           column=end_column).coordinate
-            # выводим найденный диапазон
-            return range
-        else:
-            print('Диапазон не найден')
+        coordinate = {
+            'start_row': start_position.row + 4 if table == 'tickets' else start_position_st.row + 4,
+            'start_column': start_position.column if table == 'tickets' else start_position_st.column,
+            'last_column': last_column.column if table == 'tickets' else last_column_st.column + 4,
+            'last_row': last_row.row if table == 'tickets' else last_row_st.row
+        }
 
-    def realization_of_lottery_receipts(self):
-        # задаем начальное и конечное значение для поиска диапазона
-        start_value_row = 'Наименование филиала'
-        end_value_row = 'ИТОГО:'
-        end_value_column = 'Подлежит перечислению Принципалу за отчетный период'
+        start_coordinate = self.sheet.cell(row=coordinate["start_row"], column=coordinate["start_column"]).coordinate
+        end_coordinate = self.sheet.cell(row=coordinate["last_row"], column=coordinate["last_column"]).coordinate
+        table_range = start_coordinate + ':' + end_coordinate
 
-        # координаты начала и конца диапазона
-        start_row, start_column, end_row, end_column = None, None, None, None
-
-        # проходим по всем ячейкам листа
-        for row in self.sheet.iter_rows():
-            for cell in row:
-                # если найдено начальное значение, запоминаем его координаты
-                if cell.value == start_value_row:
-                    start_row, start_column = cell.row + 4, cell.column
-                # если найдено конечное значение, запоминаем его координаты
-                elif cell.value == end_value_row:
-                    end_row = cell.row
-                # если найдено конечное значение, запоминаем его координаты
-                elif cell.value == end_value_column:
-                    end_column = cell.column
-
-        # проверяем, что начальное и конечное значение найдены
-        if start_row is not None and end_row is not None:
-            # определяем диапазон
-            range = self.sheet.cell(row=start_row, column=start_column).coordinate + ':' + \
-                    self.sheet.cell(row=end_row, column=end_column).coordinate
-            # выводим найденный диапазон
-            return range
-        else:
-            print('Диапазон не найден')
-
-    # TODO: нужен ли метод?
-    def AFPS_MOSCOW_tickets(self):
-        branch = "УФПС Г. МОСКВЫ"
-        diapason = WorkSheet().realization_of_lottery_tickets()
-        min_row = int(get_boundary_values(diapason, 'min_row'))
-        max_row = int(get_boundary_values(diapason, 'max_row'))
-
-        for row in range(min_row, max_row):
-            cell = self.sheet.cell(row, 2)
-            if cell.value == branch:
-                print("Фраза найдена в строке:", row)
-        return min_row, max_row
+        return table_range
 
 
 # Объекты класса WorkSheet
-tickets_table_range = WorkSheet().realization_of_lottery_tickets()
-receipts_table_range = WorkSheet().realization_of_lottery_receipts()
+workSheet = WorkSheet()
+tickets_table_range = workSheet.table_range('tickets')
+receipts_table_range = workSheet.table_range('receipts')
 
 
 class ReportAgentData(CommonFunctions):
+    # TODO: отрефакторить наподобии
+    """
+    def get_values_from_table(self, column, table_range):
+        result_row = int(get_boundary_values(table_range, 'max_row'))
+        values = {
+            'sold_number': self._get_cell_value('C', result_row),
+            'sold_amount': self._get_cell_value('E', result_row),
+            'paid_number': self._get_cell_value('H', result_row),
+            'paid_amount': self._get_cell_value('J', result_row),
+            'reward': round(Decimal(self._get_cell_value('N', result_row)), 2),
+            'transfer': round(Decimal(self._get_cell_value('O', result_row)), 2)
+        }
+        return values.get(column)
+
+    def total_values_lottery_tickets(self, column):
+        return self.get_values_from_table(column, tickets_table_range)
+
+    def total_values_lottery_receipts(self, column):
+        return self.get_values_from_table(column, receipts_table_range)
+    """
+
     # Беру данные из "ИТОГО" в таблице "Реализация лотерейных билетов"
     def total_values_lottery_tickets(self, column):
         result_row = get_boundary_values(tickets_table_range, 'max_row')
-        # Продажи
-        sold_number = self._get_cell_value('F', result_row)
-        sold_amount = self._get_cell_value('G', result_row)
-        # Выплаты
-        paid_number = self._get_cell_value('K', result_row)
-        paid_amount = self._get_cell_value('L', result_row)
-        # Вознаграждения
-        reward = round(float(self._get_cell_value('N', result_row)), 2)
-        # Перечисление принципалу
-        transfer = round(float(self._get_cell_value('O', result_row)), 2)
-
-        if column == 'sold_number':
-            return sold_number
-        elif column == 'sold_amount':
-            return sold_amount
-        elif column == 'paid_number':
-            return paid_number
-        elif column == 'paid_amount':
-            return paid_amount
-        elif column == 'reward':
-            return reward
-        elif column == 'transfer':
-            return transfer
+        values = {
+            # Продажи
+            'sold_number': self._get_cell_value('F', result_row),
+            'sold_amount': self._get_cell_value('G', result_row),
+            # Выплаты
+            'paid_number': self._get_cell_value('K', result_row),
+            'paid_amount': self._get_cell_value('L', result_row),
+            # Вознаграждения
+            'reward': round(float(self._get_cell_value('N', result_row)), 2),
+            # Перечисление принципалу
+            'transfer': round(float(self._get_cell_value('O', result_row)), 2)
+        }
+        return values[column]
 
     # Беру данные из "ИТОГО" в таблице "Реализация лотерейных квитанций"
     def total_values_lottery_receipts(self, column):
         result_row = get_boundary_values(receipts_table_range, 'max_row')
-        # Продажи
-        sold_number = self._get_cell_value('C', result_row)
-        sold_amount = self._get_cell_value('E', result_row)
-        # Выплаты
-        paid_number = self._get_cell_value('H', result_row)
-        paid_amount = self._get_cell_value('J', result_row)
-        # Вознаграждения
-        reward = round(float(self._get_cell_value('N', result_row)), 2)
-        # Перечисление принципалу
-        transfer = round(float(self._get_cell_value('O', result_row)), 2)
+        values = {
+            # Продажи
+            'sold_number': self._get_cell_value('C', result_row),
+            'sold_amount': self._get_cell_value('E', result_row),
+            # Выплаты
+            'paid_number': self._get_cell_value('H', result_row),
+            'paid_amount': self._get_cell_value('J', result_row),
+            # Вознаграждения
+            'reward': round(float(self._get_cell_value('N', result_row)), 2),
+            # Перечисление принципалу
+            'transfer': round(float(self._get_cell_value('O', result_row)), 2)
+        }
+        return values[column]
 
-        if column == 'sold_number':
-            return sold_number
-        elif column == 'sold_amount':
-            return sold_amount
-        elif column == 'paid_number':
-            return paid_number
-        elif column == 'paid_amount':
-            return paid_amount
-        elif column == 'reward':
-            return reward
-        elif column == 'transfer':
-            return transfer
+    def get_values_in_column(self, column, add_to_row):
+        result_row = int(get_boundary_values(receipts_table_range, 'max_row')) + add_to_row
+        reward = self._get_cell_value(column, result_row)
+        return reward
 
     # Общая сумма двух таблиц по вознаграждению
-    def reward_of_two_tables(self):
-        result_row = int(get_boundary_values(receipts_table_range, 'max_row')) + 5
-        reward = self._get_cell_value('K', result_row)
-        return reward
+    def get_reward_of_two_tables(self):
+        return self.get_values_in_column('K', 5)
 
     # Общая сумма двух таблиц по перечислению средств
-    def transfer_of_two_tables(self):
-        result_row = int(get_boundary_values(receipts_table_range, 'max_row')) + 6
-        reward = self._get_cell_value('K', result_row)
-        return reward
+    def get_transfer_of_two_tables(self):
+        return self.get_values_in_column('K', 6)
 
-        # Общая сумма двух таблиц по продажам
-
-    def sales_of_two_tables(self):
-        result_row = int(get_boundary_values(receipts_table_range, 'max_row')) + 3
-        reward = self._get_cell_value('O', result_row)
-        return reward
+    # Общая сумма двух таблиц по продажам
+    def get_sales_of_two_tables(self):
+        return self.get_values_in_column('O', 3)
 
     # Общая сумма двух таблиц по выплатам
-    def payment_of_two_tables(self):
-        result_row = int(get_boundary_values(receipts_table_range, 'max_row')) + 4
-        reward = self._get_cell_value('O', result_row)
-        return reward
+    def get_payment_of_two_tables(self):
+        return self.get_values_in_column('O', 4)
 
 
 class AgentAsserts(CommonFunctions):
@@ -269,10 +227,6 @@ class AgentAsserts(CommonFunctions):
         max_row = int(get_boundary_values(diapason, 'max_row'))
 
         for row in range(min_row, max_row):
-            types = ['realization_tickets', 'realization_receipts']
-            if table not in types:
-                raise ValueError('Неверный тип таблицы')
-
             columns = {
                 'sold_amount_column': 7 if table == 'realization_tickets' else 5,
                 'paid_amount_column': 11 if table == 'realization_tickets' else 8,

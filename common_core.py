@@ -282,9 +282,9 @@ def input_data():
         ("K49", "Расчет для каждой строки верный?\nЕсли нет, то на какой строке?"),
         ("J49", f"{agent_asserts.check_row('realization_tickets')}"),
         ("O49", f"{agent_asserts.check_row('realization_receipts')}"),
-        ("J51", f"Общее вознаграждение агента составило:\n{report_agent_data.reward_of_two_tables()} руб"),
+        ("J51", f"Общее вознаграждение агента составило:\n{report_agent_data.get_reward_of_two_tables()} руб"),
         ("J53",
-         f"Общая сумма к перечислению на расч.счет составляет:\n{report_agent_data.transfer_of_two_tables()} руб"),
+         f"Общая сумма к перечислению на расч.счет составляет:\n{report_agent_data.get_transfer_of_two_tables()} руб"),
 
         # Отчет агента для бестиражных лотерей
         ("R28", "Отчет агента для бестиражных лотерей"),
@@ -424,8 +424,8 @@ def check_and_painting():
 
         ("J49", agent_asserts.check_row('realization_tickets'), 'ДА'),
         ("O49", agent_asserts.check_row('realization_receipts'), 'ДА'),
-        ("J51", report_agent_data.reward_of_two_tables(), agent_asserts.total_rewards()),
-        ("J53", report_agent_data.transfer_of_two_tables(), agent_asserts.total_transfer()),
+        ("J51", report_agent_data.get_reward_of_two_tables(), agent_asserts.total_rewards()),
+        ("J53", report_agent_data.get_transfer_of_two_tables(), agent_asserts.total_transfer()),
 
         # Отчет агента о бестиражных билетах
         ("R38", agent_noncirculated_asserts.sold_number_tickets(),
