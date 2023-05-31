@@ -11,7 +11,6 @@ class CommonFunctions:
         self.book = load_workbook(filename=self.file_path, data_only=True)
         self.sheet = self.book.active
 
-
     def _get_cell_value(self, column_letter, idx):
         return _get_cell_value(column_letter, idx, self.sheet)
 
@@ -124,7 +123,7 @@ class PaymentsAsserts(CommonFunctions):
         ticketsQuantity = self.counting_tickets('Электронный')[0] + self.counting_tickets('Бумажный')[0] + \
                           self.counting_tickets('Открытка')[0]
         winAmounts = self.counting_tickets('Электронный')[1] + self.counting_tickets('Бумажный')[1] + \
-                     self.counting_tickets('Открытка')[1]
+            self.counting_tickets('Открытка')[1]
 
         return ticketsQuantity, winAmounts
 
@@ -179,7 +178,7 @@ class PaymentListTicketsInArray(CommonFunctions):
             ticket_number = self._get_cell_value('I', i)
 
             # Список моментальных и тиражных билетов
-            if report_ticket_type in ['Бумажный', 'Открытка'] and report_ticket_type in ticket_type :
+            if report_ticket_type in ['Бумажный', 'Открытка'] and report_ticket_type in ticket_type:
 
                 #TODO: не нравятся условия, должен быть другой вариант
                 if product_code not in bingo_lottery_codes and is_instant == True:
@@ -192,7 +191,6 @@ class PaymentListTicketsInArray(CommonFunctions):
                 tickets.append(ticket_number)
 
         return tickets
-
 
     def digital_tickets(self):
         digitals = self.search_tickets('Электронный', 'Купон')

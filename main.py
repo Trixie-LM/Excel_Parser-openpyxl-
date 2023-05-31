@@ -7,13 +7,14 @@ from util import Timer
 import common_core
 
 
-
-# Вычесление время вызова приложения
+# Вычисление время вызова приложения
 timer = Timer()
 
 # Переменные классов
+#TODO: Удалить report_p_p_registry, импортировать из CC
 report_p_p_registry = ReportPaidPaymentRegistry()
 PreCondition = PreCondition()
+
 
 class CreatingFinalReport:
     def __init__(self):
@@ -72,7 +73,8 @@ class CreatingFinalReport:
         timer.tick('Проверка значений заняла')
         self.book.save(self.file_path)
 
-    def postconditions(self):
+    @staticmethod
+    def postconditions():
         discrepancies_in_reports.postconditions()
 
     def calling_all_methods(self):

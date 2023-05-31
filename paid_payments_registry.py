@@ -11,15 +11,14 @@ class CommonFunctions:
         self.file_path = files_path.payment_registry
         self.book = load_workbook(filename=self.file_path, data_only=True)
         self.sheet = self.book.active
-
-        # Проверка наличия доп.листа в файле
+        # Проверка наличия доп. листа в файле
         if "Реестр выплаченных выигрышей" not in self.book.sheetnames:
             self.book.create_sheet("Реестр выплаченных выигрышей")
-
         self.add_sheet = self.book["Реестр выплаченных выигрышей"]
 
     def _get_cell_value(self, column_letter, idx):
         return _get_cell_value(column_letter, idx, self.sheet)
+
 
 class PreCondition(CommonFunctions):
     """
@@ -70,6 +69,7 @@ class PreCondition(CommonFunctions):
 
         self.book.save(self.file_path)
 
+
 class ReportPaidPaymentRegistry(CommonFunctions):
     def paid_lottery_names_list(self):
         return list(self.add_sheet.rows)
@@ -105,10 +105,12 @@ class ReportPaidPaymentRegistry(CommonFunctions):
                         if remaining_tickets[ticket_number_cell] == int(win_amount_cell.replace(' ', '')):
                             remaining_tickets.pop(ticket_number_cell)
         except ValueError:
-            remaining_tickets = f"Ошибка! Что-то не так с билетом \"{ticket_number_cell}\" на строке {row}, возможно, нет в отчете выплат!"
+            remaining_tickets = f"Ошибка! Что-то не так с билетом \"{ticket_number_cell}\" " \
+                                f"на строке {row}, возможно, нет в отчете выплат!"
 
         except KeyError:
-            remaining_tickets = f"Ошибка! Билета \"{ticket_number_cell}\" на строке {row} нет в реестре выплаченных выигрышей, но есть в отчете по продажам!"
+            remaining_tickets = f"Ошибка! Билета \"{ticket_number_cell}\" " \
+                                f"на строке {row} нет в реестре выплаченных выигрышей, но есть в отчете по продажам!"
 
         return remaining_tickets
 

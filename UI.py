@@ -59,10 +59,12 @@ opening_URls = tkinter.LabelFrame(frame, text="Открытие всех URL в 
 opening_URls.grid(row=0, column=0, padx=20, pady=10)
 
 # Информация по функционалу
-opening_URls_label = tkinter.Label(opening_URls,
-                                   text=open_URL_info_text,
-                                   font=("Arial", 8, "italic"),  # font(шрифт, размер, курсив)
-                                   justify="left")  # Выравнивание по левую сторону
+opening_URls_label = tkinter.Label(
+    opening_URls,
+    text=open_URL_info_text,
+    font=("Arial", 8, "italic"),  # font(шрифт, размер, курсив)
+    justify="left"  # Выравнивание по левую сторону
+)
 opening_URls_label.grid(row=0, column=0, columnspan=2)
 
 label_file_name = tkinter.Label(opening_URls, text="Укажите название файла:", font=("Arial", 8), justify="left")

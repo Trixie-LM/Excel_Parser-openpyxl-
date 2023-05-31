@@ -139,7 +139,7 @@ class AgentNoncirculatedAsserts(CommonFunctions):
 
         for row in range(min_row, max_row):
             columns = {
-                'sold_amount_column': 8,
+                'sold_amount_column': 9,
                 'paid_amount_column': 14,
                 'percent_column': 15,
                 'reward_column': 16,

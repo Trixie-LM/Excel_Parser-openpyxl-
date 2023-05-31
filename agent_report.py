@@ -122,12 +122,14 @@ class ReportAgentData(CommonFunctions):
         return reward
 
     # Общая сумма двух таблиц по вознаграждению
-    def get_reward_of_two_tables(self):
-        return self.get_values_in_column('K', 5)
+    def get_reward_of_two_tables(self) -> float:
+        summary = float(self.get_values_in_column('K', 5))
+        return summary
 
     # Общая сумма двух таблиц по перечислению средств
-    def get_transfer_of_two_tables(self):
-        return self.get_values_in_column('K', 6)
+    def get_transfer_of_two_tables(self) -> float:
+        summary = float(self.get_values_in_column('K', 6))
+        return summary
 
     # Общая сумма двух таблиц по продажам
     def get_sales_of_two_tables(self):
@@ -204,12 +206,12 @@ class AgentAsserts(CommonFunctions):
         return self.counting_values_in_column('realization_receipts', 15, 'float')
 
     # Общее вознаграждение и перечисление
-    def total_rewards(self):
+    def total_rewards(self) -> float:
         tickets = self.reward_tickets()
         receipts = self.reward_receipts()
         return tickets + receipts
 
-    def total_transfer(self):
+    def total_transfer(self) -> float:
         tickets = self.transfer_tickets()
         receipts = self.transfer_receipts()
         return tickets + receipts

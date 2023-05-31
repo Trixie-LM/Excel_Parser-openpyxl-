@@ -2,6 +2,7 @@ from openpyxl import load_workbook
 from util import _get_cell_value, get_boundary_values
 import files_path
 
+
 class CommonFunctions:
     def __init__(self):
         self.file_path = files_path.branch_report
@@ -53,10 +54,12 @@ class WorkSheet(CommonFunctions):
 
         return table_range
 
+
 # Объекты класса WorkSheet
 workSheet = WorkSheet()
 tickets_table_range = workSheet.table_range('tickets')
 receipts_table_range = workSheet.table_range('receipts')
+
 
 class ReportBranchData(CommonFunctions):
     # Получение данных из "ИТОГО" в таблице "Реализация лотерейных билетов"
@@ -86,16 +89,16 @@ class ReportBranchData(CommonFunctions):
         return values.get(column)
 
     # Общая сумма двух таблиц по вознаграждению
-    def reward_of_two_tables(self):
+    def reward_of_two_tables(self) -> float:
         result_row = int(get_boundary_values(receipts_table_range, 'max_row')) + 3
         reward = self._get_cell_value('I', result_row)
-        return reward
+        return float(reward)
 
     # Общая сумма двух таблиц по перечислению средств
-    def transfer_of_two_tables(self):
+    def transfer_of_two_tables(self) -> float:
         result_row = int(get_boundary_values(receipts_table_range, 'max_row')) + 4
         reward = self._get_cell_value('I', result_row)
-        return reward
+        return float(reward)
 
 
 class BranchAsserts(CommonFunctions):
@@ -103,6 +106,7 @@ class BranchAsserts(CommonFunctions):
         Функция для подсчета итоговых данных
         в таблицах "Реализация лотерейных билетов" и "Реализация лотерейных квитанций"
     """
+
     def counting_values_in_column(self, table, column, data_type='int'):
         total = 0
         if table == 'realization_tickets':
@@ -222,4 +226,3 @@ class BranchAsserts(CommonFunctions):
                 return "ДА"
             except:
                 return 'НЕТ!\nСтрока ' + str(row)
-
